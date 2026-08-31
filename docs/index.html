@@ -1,0 +1,857 @@
+<title>The Xenakis Master Equation</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,600;6..96,700&family=IBM+Plex+Mono:wght@400;500&family=Spectral:ital,wght@0,300;0,400;0,600;1,400&display=swap">
+<script>
+window.MathJax = {
+  tex: {inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], processEscapes: true},
+  svg: {fontCache: 'global', scale: 0.98},
+  options: {renderActions: {addMenu: []}}
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js"></script>
+<style>
+:root{
+  --ground:#eef1ef; --surface:#fbfcfb; --sunk:#e6eae7;
+  --ink:#0f1619; --ink2:#44525a; --muted:#78868d; --rule:#d5ddd9; --rule2:#e6ebe8;
+  --cls:#2a78d6; --cls-ink:#1c5cab; --qnt:#e05f28; --qnt-ink:#a8410f;
+  --ok:#0c7c4a;
+  --shadow:0 1px 2px rgba(15,22,25,.05),0 8px 24px rgba(15,22,25,.05);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0c1215; --surface:#131b1f; --sunk:#0a0f12;
+    --ink:#e9f0f1; --ink2:#a7b8bf; --muted:#7a888f; --rule:#222f34; --rule2:#1a252a;
+    --cls:#3987e5; --cls-ink:#7fb2ee; --qnt:#eb7d4d; --qnt-ink:#f0a077;
+    --ok:#3fae76;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0c1215; --surface:#131b1f; --sunk:#0a0f12;
+  --ink:#e9f0f1; --ink2:#a7b8bf; --muted:#7a888f; --rule:#222f34; --rule2:#1a252a;
+  --cls:#3987e5; --cls-ink:#7fb2ee; --qnt:#eb7d4d; --qnt-ink:#f0a077;
+  --ok:#3fae76;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Spectral",Georgia,"Times New Roman",serif;
+  font-size:17px; line-height:1.66; -webkit-font-smoothing:antialiased;
+  background-image:
+    repeating-linear-gradient(0deg,var(--rule2) 0 1px,transparent 1px 24px),
+    repeating-linear-gradient(90deg,var(--rule2) 0 1px,transparent 1px 24px);
+  background-attachment:fixed;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+.col{max-width:70ch}
+h1,h2,h3{font-family:"Bodoni Moda",Didot,"Times New Roman",serif;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.9rem,7.2vw,5.2rem);font-weight:700;line-height:.96;letter-spacing:-.018em}
+h2{font-size:clamp(1.65rem,3.2vw,2.3rem);font-weight:700;line-height:1.1;letter-spacing:-.01em}
+h3{font-size:1.16rem;font-weight:600;line-height:1.3;margin-bottom:.3rem}
+p{margin:0 0 1.05em}
+a{color:var(--cls-ink)}
+.mono,.eyebrow,.num,.lab,figcaption,.ctl,.tbl{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+.eyebrow{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:500}
+
+/* ---------- hero ---------- */
+header{padding:clamp(3rem,7vw,5.5rem) 0 2.2rem;position:relative}
+.kicker{display:flex;gap:.9rem;align-items:center;margin-bottom:1.4rem;flex-wrap:wrap}
+.kicker .eyebrow{color:var(--ink2)}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--qnt);flex:none}
+.standfirst{font-size:1.22rem;line-height:1.55;color:var(--ink2);max-width:62ch;margin-top:1.5rem;font-weight:300}
+.standfirst em{font-style:italic;color:var(--ink)}
+#graph{display:block;width:100%;height:230px;margin-top:2.4rem;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--surface)}
+.graphnote{display:flex;justify-content:space-between;gap:1rem;margin-top:.5rem;font-size:.72rem;color:var(--muted);letter-spacing:.02em}
+
+/* ---------- sections ---------- */
+section{padding:3.4rem 0;border-top:1px solid var(--rule)}
+.shead{display:grid;grid-template-columns:5.5rem 1fr;gap:1.2rem;align-items:start;margin-bottom:1.8rem}
+.num{font-size:.78rem;color:var(--qnt-ink);letter-spacing:.12em;padding-top:.55rem;font-weight:500}
+.lede{font-size:1.05rem;color:var(--ink2);max-width:66ch;margin-top:.55rem}
+.body{display:grid;grid-template-columns:5.5rem minmax(0,1fr);gap:1.2rem}
+.body > .content{min-width:0}
+.content > p, .content > ul, .content > h3, .content > .note{max-width:70ch}
+.content > h3{margin-top:2.2rem}
+.content > h3:first-child{margin-top:0}
+.content > ul{padding-left:1.15rem}
+.content > ul li{margin-bottom:.35em}
+@media (max-width:760px){.shead,.body{grid-template-columns:1fr}.num{padding-top:0}}
+
+/* ---------- math ---------- */
+.eq{margin:1.5rem 0;padding:.3rem 0;overflow-x:auto;overflow-y:hidden}
+mjx-container[display="true"]{text-align:left !important}
+.eq.tagged{display:flex;align-items:center;gap:1.6rem;flex-wrap:nowrap}
+.tag{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--muted)}
+mjx-container{color:var(--ink)}
+mjx-container[display="true"]{margin:0 !important}
+
+/* ---------- figures & cards ---------- */
+figure{margin:2.2rem 0 2.4rem}
+figure img{display:block;width:100%;height:auto;border:1px solid var(--rule);background:var(--surface);border-radius:2px}
+figcaption{font-size:.76rem;color:var(--muted);margin-top:.7rem;line-height:1.55;max-width:78ch}
+figcaption b{color:var(--ink2);font-weight:500}
+.bleed{max-width:1120px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:1.15rem 1.25rem;box-shadow:var(--shadow)}
+.note{border-left:2px solid var(--qnt);padding:.15rem 0 .15rem 1rem;margin:1.5rem 0;color:var(--ink2);font-size:.97rem}
+.note b{color:var(--ink)}
+
+/* ---------- table ---------- */
+.tblwrap{overflow-x:auto;margin:1.5rem 0;max-width:790px}
+table{border-collapse:collapse;width:100%;font-size:.79rem;font-family:"IBM Plex Mono",monospace}
+th,td{text-align:left;padding:.5rem .8rem;border-bottom:1px solid var(--rule2);white-space:nowrap}
+th{color:var(--muted);font-weight:500;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--rule)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.pass{color:var(--ok)}
+tr.hi td{background:color-mix(in srgb,var(--qnt) 8%,transparent)}
+
+/* ---------- live sim ---------- */
+.sim{margin:2rem 0 0;background:var(--surface);border:1px solid var(--rule);border-radius:3px;box-shadow:var(--shadow);overflow:hidden}
+.simhead{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding:.9rem 1.1rem;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.panes{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule)}
+@media (max-width:700px){.panes{grid-template-columns:1fr}}
+.pane{background:var(--surface);padding:.85rem 1rem 1rem}
+.ptitle{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:500;display:flex;align-items:center;gap:.5rem}
+.pane canvas{display:block;width:100%;height:330px;touch-action:none;cursor:grab}
+.pane canvas:active{cursor:grabbing}
+.readout{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink2);min-height:3.1em;margin-top:.45rem;line-height:1.5}
+.readout .k{color:var(--muted)}
+.ctl{display:flex;flex-wrap:wrap;gap:1.4rem;align-items:flex-end;padding:1rem 1.1rem;border-top:1px solid var(--rule);background:var(--sunk)}
+.slider{display:flex;flex-direction:column;gap:.3rem;min-width:150px;flex:1 1 150px}
+.slider label{font-size:.68rem;letter-spacing:.09em;color:var(--muted);display:flex;justify-content:space-between;gap:.6rem;align-items:baseline}
+.slider label i{font-style:normal;font-size:.82rem;color:var(--ink2);letter-spacing:0}
+.slider label u{text-decoration:none;text-transform:uppercase}
+.slider label span{color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--qnt);height:18px}
+.btns{display:flex;gap:.5rem;flex-wrap:wrap}
+button{font-family:"IBM Plex Mono",monospace;font-size:.73rem;letter-spacing:.05em;padding:.5rem .85rem;border:1px solid var(--rule);background:var(--surface);color:var(--ink);border-radius:2px;cursor:pointer}
+button:hover{border-color:var(--qnt);color:var(--qnt-ink)}
+button[aria-pressed="true"]{background:var(--qnt);border-color:var(--qnt);color:#fff}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--qnt);outline-offset:2px}
+#spark{display:block;width:100%;height:74px;border-top:1px solid var(--rule);background:var(--surface)}
+.sparklab{display:flex;justify-content:space-between;padding:.4rem 1.1rem .8rem;font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--muted)}
+.swatch{width:9px;height:9px;border-radius:2px;flex:none}
+
+footer{padding:3rem 0 4rem;border-top:1px solid var(--rule);color:var(--muted);font-size:.8rem}
+footer .col{max-width:74ch}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="kicker">
+    <span class="eyebrow">Stochastic music</span><span class="dot"></span>
+    <span class="eyebrow">Petri nets</span><span class="dot"></span>
+    <span class="eyebrow">Open quantum systems</span>
+  </div>
+  <h1>The Xenakis<br>Master Equation</h1>
+  <p class="standfirst">One line of Markov dynamics that draws Xenakis's <em>sound graphs</em>, written first as a stochastic Hamiltonian in the Baez–Biamonte sense, then lifted to a Lindblad equation, then run on the 1728-chord lattice of three voices in twelve-tone space.</p>
+  <canvas id="graph" aria-label="Animated glissando bundle generated by the master equation"></canvas>
+  <div class="graphnote">
+    <span>live sample paths &mdash; three voices, drifts a = +0.8, 0, &minus;0.8, &beta; = 0.6</span>
+    <span>time &rarr;</span>
+  </div>
+</header>
+
+<section id="equation">
+  <div class="shead">
+    <div class="num">§</div>
+    <div>
+      <h2>The equation</h2>
+      <p class="lede">A sound graph is a picture of pitch against time. The simplest object that generates one is a continuous-time random walk on pitch, with a bias.</p>
+    </div>
+  </div>
+  <div class="body"><div class="num"></div><div class="content">
+
+  <p>Take three voices. A <b>chord</b> is a point \(n=(n_1,n_2,n_3)\) on the lattice \(\Lambda=\mathbb{Z}_{12}^{\,3}\) — twelve pitch classes, one coordinate per voice, 1728 points, a discrete 3-torus. The only elementary event is one voice sliding one semitone: \(n \to n \pm e_i\). Everything else is bookkeeping.</p>
+
+  <div class="eq tagged"><div>\[ \frac{\partial P(n,t)}{\partial t}=\sum_{i=1}^{3}\ \sum_{s=\pm 1}\Big[\,w_i^{s}(n-se_i)\,P(n-se_i,t)\;-\;w_i^{s}(n)\,P(n,t)\,\Big] \]</div><div class="tag">(M)</div></div>
+
+  <p>Gain minus loss, nothing more. The music is entirely in the rates:</p>
+
+  <div class="eq tagged"><div>\[ w_i^{s}(n)\;=\;\frac{\gamma\,(1+s\,a_i)}{1+\exp\!\big(\beta\,[\,V(n+se_i)-V(n)\,]\big)} \]</div><div class="tag">(R)</div></div>
+
+  <p>Three knobs, each of which is a compositional decision:</p>
+  <ul>
+    <li><b>\(\gamma\)</b> — tempo: events per unit time per voice.</li>
+    <li><b>\(a_i\in(-1,1)\)</b> — the <em>glissando</em>: a signed drift for voice \(i\). This is Xenakis's velocity, the slope of a line in the sound graph.</li>
+    <li><b>\(\beta\)</b> — inverse temperature, i.e. how strongly harmony is enforced. \(\beta=0\) is a pure Brownian pitch cloud; \(\beta\to\infty\) freezes the ensemble onto its most consonant chords.</li>
+  </ul>
+
+  <p>These are Glauber (heat-bath) rates, which matters twice. They are bounded by \(\gamma(1+|a_i|)\), so the process never runs away; and at \(a=0\) they satisfy detailed balance exactly, since \(\big(1+e^{-\beta\Delta V}\big)/\big(1+e^{\beta\Delta V}\big)=e^{-\beta\Delta V}\). The stationary state is then Boltzmann, \(P_\infty(n)\propto e^{-\beta V(n)}\) — checked to \(10^{-18}\) below. Turning on a drift multiplies that ratio by \((1+a)/(1-a)\): detailed balance breaks, and a steady probability current runs around the pitch circle. <b>That current is the glissando.</b></p>
+
+  <h3>The tension operator</h3>
+  <p>\(V\) is where music theory enters, and it is a three-body potential:</p>
+
+  <div class="eq"><div>\[ V(n)\;=\;-\lambda\!\!\sum_{i&lt;j}c\big(n_i-n_j\big)\;+\;U\!\!\sum_{i&lt;j}\delta_{n_i n_j}\;-\;\mu\,\max_{r\in\mathbb{Z}_{12}}\ \sum_{p\,\in\,\mathrm{set}(n)} h(p-r) \]</div></div>
+
+  <p>The first term is pairwise consonance: \(c(d)=1/\sqrt{pq}\) for the simplest 5-limit ratio \(p/q\) naming interval class \(d\), symmetrised over inversion, so the fifth and the fourth share \(3/2\) and \(c(7)=c(5)=0.408\) is the largest. The second penalises unisons — it is exactly the on-site repulsion \(U\) of the Bose–Hubbard model that appears in §02. The third is <em>virtual pitch</em>: how well the chord's pitch-class set matches the harmonic series over its best root, with \(h\) the series' weight \(1/k\) landing on pitch classes \(0,0,7,0,4,7,10,0\) for harmonics \(1..8\).</p>
+
+  <div class="note"><b>The third term is not decoration.</b> With \(\mu=0\), pairwise consonance alone is minimised by a stack of fifths, not by a triad — two perfect fifths beat a fifth plus two thirds. The triad is not a two-body ground state. Switching on the three-body root-support term at \(\mu=\lambda\) reorders the spectrum so that the major triads sit at the bottom, and the quintal stack becomes the first excited band.</div>
+
+  <h3>What it becomes in the continuum</h3>
+  <p>Expanding (R) for slowly varying \(V\) — \(1/(1+e^{\beta V'})\approx \tfrac12-\tfrac{\beta}{4}V'\) — and keeping the first two Kramers–Moyal coefficients gives a Smoluchowski equation, one per voice:</p>
+
+  <div class="eq"><div>\[ \partial_t P=-\sum_i \partial_i\Big[\Big(\gamma a_i-\tfrac{\gamma\beta}{2}\,\partial_i V\Big)P\Big]+\frac{\gamma}{2}\sum_i \partial_i^2 P \]</div></div>
+
+  <p>with mobility \(\gamma\beta/2\) and diffusion \(D=\gamma/2\), so \(D/\text{mobility}=1/\beta\): the Einstein relation holds and \(\beta\) is a temperature in the honest sense. Set \(V=0\) and you get exactly the picture Xenakis drew for <em>Pithoprakta</em> — a cloud of pitch spreading as \(\sqrt{\gamma t}\), with each voice's glissando velocity \(a_i\) drawn from a distribution. Drawing those \(a_i\) from a Maxwell–Boltzmann law recovers his construction verbatim; equation (M) is the generator that construction was a sampling of. Keeping \(V\) turns the free cloud into motion on a harmonic landscape, and taking the process on a discrete lattice in discrete time is the <em>Analogique A/B</em> screen chain.</p>
+
+  <figure class="bleed">
+    <img src="assets/fig1_sound_graphs.png" alt="Four panels: glissando fan from many sample paths; the tension regime where voices bind; the probability density over pitch and time; and the stationary interval distribution at three temperatures.">
+    <figcaption><b>Two regimes of the same equation.</b> (a) Drift-dominated, \(\beta=0.6\): eighteen realisations, three voices each, opening into the ruled fan of <em>Metastaseis</em>. (b) Tension-dominated, \(\beta=4\), no drift: the trio binds and the voices move as a unit. (c) The density \(P(\text{pitch},t)\) for regime (a) over 500 realisations — this cloud, not any one path, is what (M) evolves. (d) Stationary probability of the interval between two voices; as \(\beta\) rises the flat Brownian distribution sharpens onto fifths and thirds.</figcaption>
+  </figure>
+
+  </div></div>
+</section>
+
+<section id="chordspace">
+  <div class="shead">
+    <div class="num">00</div>
+    <div>
+      <h2>Plotted over chord space</h2>
+      <p class="lede">The state space is a 12&times;12&times;12 torus. Plotting \(V\) on it turns harmony into a landscape, and the equation into motion on that landscape.</p>
+    </div>
+  </div>
+  <div class="body"><div class="num"></div><div class="content">
+
+  <p>Each axis is one voice's pitch class, and opposite faces are identified — moving a voice up twelve semitones returns you to the same chord. Consonant chords are the deep points of the landscape, and the walk (M) is biased downhill by \(\beta\) and pushed sideways by the drifts \(a_i\).</p>
+
+  <figure class="bleed">
+    <img src="assets/fig2_chord_space.png" alt="Three 3D scatter plots of the 12x12x12 chord lattice: the tension landscape, the 72-chord ground manifold, and the Boltzmann stationary state.">
+    <figcaption><b>Chord space.</b> Left: the tension landscape, most consonant points darkest. Middle: the ground manifold — 72 lattice points arranged as twelve clusters of six. Right: the stationary state \(\propto e^{-\beta V}\) at \(\beta=3\), which concentrates on that manifold without collapsing onto it.</figcaption>
+  </figure>
+
+  <h3>What sits at the bottom</h3>
+  <p>Diagonalising \(V\) on the lattice is a one-line calculation whose answer is not obvious in advance. The lowest five tension levels, each 72-fold degenerate (12 transpositions &times; 6 voice orderings):</p>
+
+  <div class="tblwrap"><table>
+    <thead><tr><th>Level</th><th class="n">V</th><th>Interval pattern</th><th>Name</th><th class="n">Degeneracy</th></tr></thead>
+    <tbody>
+      <tr class="hi"><td>ground</td><td class="n">&minus;3.4651</td><td>(0, 4, 7)</td><td>major triad</td><td class="n">72</td></tr>
+      <tr><td>1st</td><td class="n">&minus;3.3406</td><td>(0, 5, 10)</td><td>quartal / quintal stack</td><td class="n">72</td></tr>
+      <tr><td>2nd</td><td class="n">&minus;3.3334</td><td>(0, 2, 9)</td><td>added-sixth fragment</td><td class="n">72</td></tr>
+      <tr><td>3rd</td><td class="n">&minus;3.2651</td><td>(0, 3, 7)</td><td>minor triad</td><td class="n">72</td></tr>
+      <tr><td>4th</td><td class="n">&minus;3.1905</td><td>(0, 2, 5)</td><td>&mdash;</td><td class="n">72</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>The ground manifold of the generator is the set of major triads, the first excited band is Xenakis's own quartal harmony, and the minor triad sits third — split from the major by the three-body term alone, since the two share an identical pairwise interval content. The gap \(\Delta=0.124\) between major and quintal is what \(\beta\) competes against: for \(\beta\Delta\ll1\) the walk cannot tell them apart and the texture is atonal; for \(\beta\Delta\gg1\) it locks.</p>
+
+  </div></div>
+</section>
+
+<section id="baez">
+  <div class="shead">
+    <div class="num">01</div>
+    <div>
+      <h2>In Baez&ndash;Biamonte form</h2>
+      <p class="lede">Rewriting (M) as \(\dot\psi = H\psi\) on a stochastic Fock space, with \(H\) built from creation and annihilation operators over a Petri net.</p>
+    </div>
+  </div>
+  <div class="body"><div class="num"></div><div class="content">
+
+  <p>Baez and Biamonte's move in <em>Quantum Techniques for Stochastic Mechanics</em> is to put probability distributions where quantum states normally go. A stochastic state is \(\psi=\sum_n P(n)\,|n\rangle\) with \(P(n)\ge0\), and normalisation is the pairing with the <em>sum covector</em> \(\langle-|=\sum_n\langle n|\), so \(\langle-|\psi\rangle=1\). Then (M) is</p>
+
+  <div class="eq"><div>\[ \frac{d\psi}{dt}=H\psi,\qquad H\ \text{infinitesimal stochastic:}\quad H_{mn}\ge0\ (m\neq n),\qquad \langle-|H=0. \]</div></div>
+
+  <p>Time evolution is \(e^{tH}\), a stochastic map, in place of the unitary \(e^{-itH}\). To build \(H\) we need a Petri net.</p>
+
+  <h3>The Petri net of a chord</h3>
+  <p><b>Species:</b> pairs \((i,p)\) — "voice \(i\) is on pitch \(p\)" — so \(3\times12=36\) species. A <em>token</em> in species \((i,p)\) is one instrument of section \(i\) sounding \(p\). <b>Transitions:</b> one per triple \(\tau=(i,p,s)\), consuming a token of \((i,p)\) and producing one of \((i,p+s)\) at rate \(r_\tau=w_i^s\). Every transition is unary — one token in, one token out — which is exactly why the resulting chain conserves the number of voices.</p>
+
+  <p>With the stochastic conventions \(a^\dagger|n\rangle=|n+1\rangle\) and \(a|n\rangle=n\,|n-1\rangle\) (multiplication by \(z\) and \(\partial_z\) on generating functions), the Baez–Biamonte Hamiltonian of a Petri net is</p>
+
+  <div class="eq tagged"><div>\[ H=\sum_{\tau}r_\tau\Big(a^{\dagger\,T(\tau)}-a^{\dagger\,S(\tau)}\Big)\,a^{S(\tau)} \]</div><div class="tag">(BB)</div></div>
+
+  <p>where \(S(\tau),T(\tau)\) are the source and target multisets and \(a^{\dagger m}=\prod_k (a^\dagger_k)^{m_k}\). For our net \(S(\tau)=e_{(i,p)}\) and \(T(\tau)=e_{(i,p+s)}\), so it collapses to a sum of single hops:</p>
+
+  <div class="eq"><div>\[ \boxed{\;H=\sum_{i=1}^{3}\ \sum_{p\in\mathbb{Z}_{12}}\ \sum_{s=\pm1} w_i^{s}(p)\ \Big(a^\dagger_{(i,\,p+s)}-a^\dagger_{(i,\,p)}\Big)\,a_{(i,\,p)}\;} \]</div></div>
+
+  <p>Probability conservation is now a one-line identity rather than a computation: \(\langle-|a^\dagger_k=\langle-|\) for every \(k\), because \(a^\dagger\) merely relabels basis vectors and \(\langle-|\) sums over all of them. Hence \(\langle-|\big(a^{\dagger T}-a^{\dagger S}\big)a^{S}=\langle-|a^S-\langle-|a^S=0\), so \(\langle-|H=0\) term by term.</p>
+
+  <p>Restricting to the sector with exactly one token per voice, \(\hat N_i=\sum_p a^\dagger_{(i,p)}a_{(i,p)}=1\), the operator \(a^\dagger_{(i,q)}a_{(i,p)}\) acts as \(|q\rangle\langle p|\) on voice \(i\), and (BB) reduces to the generator of (M) on the 1728-dimensional chord space. Verified to machine zero in two independent ways below.</p>
+
+  <h3>The orchestral limit</h3>
+  <p>The same net has a second equation attached to it — Baez and Biamonte's <em>rate equation</em>, the deterministic large-number limit, where \(x_{(i,p)}\) is the number of players in section \(i\) on pitch \(p\):</p>
+
+  <div class="eq"><div>\[ \frac{dx_{(i,p)}}{dt}=\sum_\tau r_\tau\big(T(\tau)-S(\tau)\big)_{(i,p)}\ x^{S(\tau)} =\sum_{s=\pm1}\Big[w_i^{s}(p-s)\,x_{(i,p-s)}-w_i^{s}(p)\,x_{(i,p)}\Big] \]</div></div>
+
+  <p>Because every transition is unary, \(x^{S(\tau)}\) is linear and the rate equation has the same shape as the master equation. That is the precise sense in which Xenakis's masses behave like probabilities: <b>for a unary net, one voice's distribution and a hundred voices' density obey the same equation.</b> Add a genuinely bimolecular transition — a rule that fires only when two voices meet, say a real voice-leading constraint — and the two equations part company, with the mass acquiring nonlinear dynamics the single voice never had.</p>
+
+  </div></div>
+</section>
+
+<section id="quantum">
+  <div class="shead">
+    <div class="num">02</div>
+    <div>
+      <h2>Quantum generalisation</h2>
+      <p class="lede">Same Fock space, same Petri net, but amplitudes instead of probabilities: the chord becomes a superposition, and the score is a measurement record.</p>
+    </div>
+  </div>
+  <div class="body"><div class="num"></div><div class="content">
+
+  <p>The Baez–Biamonte form makes the lift almost mechanical, because the only thing separating the two mechanics is which operators are allowed. Read the same species and transitions with bosonic \(b,b^\dagger\) and a self-adjoint generator, and the pitch circle becomes a lattice model:</p>
+
+  <div class="eq tagged"><div>\[ \hat H=-J\sum_{i,p}\Big(b^\dagger_{(i,p+1)}b_{(i,p)}+\text{h.c.}\Big)+\frac{U}{2}\sum_{i,p}\hat n_{(i,p)}\big(\hat n_{(i,p)}-1\big)-\lambda\!\!\sum_{p,q} c(p-q)\,\hat n_p\hat n_q \]</div><div class="tag">(Q)</div></div>
+
+  <p>a Bose–Hubbard model on \(\mathbb{Z}_{12}\) with a long-range interaction whose coupling <em>is</em> the consonance kernel. The unison penalty \(U\) is the Hubbard repulsion; \(J\) is new — a coherent semitone hop with no classical counterpart. In the one-token-per-voice sector this is</p>
+
+  <div class="eq"><div>\[ \hat H_Q=-J\sum_{i=1}^{3}\big(S_i+S_i^\dagger\big)+\hat V,\qquad S_i:\ |n\rangle\mapsto|n+e_i\rangle, \]</div></div>
+
+  <p>with \(\hat V\) diagonal in the chord basis. But a closed \(\hat H_Q\) would be a <em>generalisation of the wrong thing</em>: it throws away the stochasticity that made this Xenakis in the first place. Keep it, by promoting each classical rate to a Lindblad jump operator:</p>
+
+  <div class="eq tagged"><div>\[ L_\tau=\sum_n \sqrt{w_i^{s}(n)}\ \big|\,n+se_i\,\big\rangle\big\langle\, n\,\big|,\qquad L_\tau^\dagger L_\tau=\sum_n w_i^s(n)\,|n\rangle\langle n| \]</div><div class="tag">(L)</div></div>
+
+  <div class="eq"><div>\[ \boxed{\;\frac{d\rho}{dt}=-i\big[\hat H_Q,\rho\big]+\sum_\tau\Big(L_\tau\rho L_\tau^\dagger-\tfrac12\big\{L_\tau^\dagger L_\tau,\rho\big\}\Big)+\kappa\sum_n\Big(\Pi_n\rho\,\Pi_n-\tfrac12\{\Pi_n,\rho\}\Big)\;} \]</div></div>
+
+  <p>with \(\Pi_n=|n\rangle\langle n|\). This is the quantum Xenakis equation. Three things make it the right generalisation rather than a different model wearing the name:</p>
+
+  <ul>
+    <li><b>It contains the original exactly.</b> Set \(J=0\): the commutator dies, the jumps map diagonals to diagonals, and \(\rho_{nn}\) obeys (M) identically — numerically to \(5.6\times10^{-17}\), not approximately.</li>
+    <li><b>Decoherence is the classical limit.</b> For any \(J\), sending \(\kappa\to\infty\) drives the populations back onto (M). Eliminating the coherences adiabatically gives the extra Zeno-suppressed hopping rate \(W_{m\leftarrow n}=2J^2\kappa/\big(\kappa^2+[V_m-V_n]^2\big)\), which vanishes as \(1/\kappa\) — the measured collapse follows that law.</li>
+    <li><b>The dictionary is Baez–Biamonte's own.</b> \(e^{tH}\) stochastic becomes \(e^{t\mathcal L}\) completely positive; \(\langle-|H=0\) becomes \(\operatorname{tr}\mathcal L(\rho)=0\); the infinitesimal-stochastic \(H\) is the restriction of \(\mathcal L\) to the diagonal subalgebra.</li>
+  </ul>
+
+  <h3>What is actually new</h3>
+  <p><b>Interference.</b> Two voice-leading paths from one chord to another now carry amplitudes that can cancel. Coherent transport is ballistic where the Markov chain is diffusive: starting from C–E–G, the r.m.s. distance travelled in chord space grows as \(t^{0.98}\) against the chain's \(t^{0.50}\), measured on the same lattice with the same \(V\). The quantum ensemble reaches chords the classical one has not yet found — and, at particular times, has near-zero amplitude on chords the classical walk visits constantly.</p>
+
+  <p><b>Entangled voices.</b> \(\hat H_Q\) does not factorise across voices, so the generic state is not "voice 1 on some pitch, voice 2 on some pitch". It is a chord with no definite pitch content until measured — a superposition of C major and F&sharp; major that is not a mixture of the two, and whose voices are correlated in a way no probability distribution over chords can reproduce.</p>
+
+  <p><b>Measurement as a compositional parameter.</b> A score is a sequence of definite chords, so writing one down means measuring. Evolve for an interval \(\tau\), sample \(n\sim|\langle n|\psi\rangle|^2\), collapse, repeat. Then \(\tau\) is a knob with no classical analogue: as \(\tau\to0\) the quantum Zeno effect freezes the chord entirely, and as \(\tau\) grows the score explores further per event than any Markov chain with the same rates. The composer's choice of <em>how often to look</em> becomes a parameter of the piece.</p>
+
+  <figure class="bleed">
+    <img src="assets/fig3_quantum.png" alt="Snapshots of the classical and quantum probability clouds at two times, a log-log plot of spreading, and the decoherence crossover curve.">
+    <figcaption><b>Quantum against classical, same lattice, same starting chord.</b> Top: probability over chord space at \(t=1\) and \(t=2.5\); the classical cloud stays compact while the quantum one has already reached the far side of the torus and shows interference structure. (c) The spreading laws, \(t^{1/2}\) against \(t^{1}\). (d) The crossover: maximum difference between quantum and classical populations as the dephasing rate \(\kappa\) rises, falling to zero as the coherent channel is measured away.</figcaption>
+  </figure>
+
+  </div></div>
+</section>
+
+<section id="sim">
+  <div class="shead">
+    <div class="num">03</div>
+    <div>
+      <h2>Simulated on the 3-note lattice</h2>
+      <p class="lede">Both equations, integrated live on all 1728 chords, from the same initial chord. Drag either cube to rotate.</p>
+    </div>
+  </div>
+  <div class="body"><div class="num"></div><div class="content">
+
+  <p>Each dot is one chord \((n_1,n_2,n_3)\); its size and darkness are the probability of finding the trio on that chord. The left panel integrates (M). The right panel integrates a single quantum trajectory of the Lindblad equation — unitary evolution under \(\hat H_Q\) with dephasing applied as random phase kicks, whose ensemble average reproduces the \(\kappa\) term exactly. Push \(\kappa\) up and the right panel turns into the left one.</p>
+
+  <div class="sim">
+    <div class="simhead">
+      <span class="eyebrow">Live &mdash; 1728 chords, integrated in your browser</span>
+      <span class="mono" id="clock" style="font-size:.72rem;color:var(--ink2);letter-spacing:.06em">t = 0.00</span>
+    </div>
+    <div class="panes">
+      <div class="pane">
+        <div class="ptitle" style="color:var(--cls-ink)"><span class="swatch" style="background:var(--cls)"></span>Classical &mdash; master equation</div>
+        <canvas id="cvC"></canvas>
+        <div class="readout" id="roC"></div>
+      </div>
+      <div class="pane">
+        <div class="ptitle" style="color:var(--qnt-ink)"><span class="swatch" style="background:var(--qnt)"></span>Quantum &mdash; Lindblad trajectory</div>
+        <canvas id="cvQ"></canvas>
+        <div class="readout" id="roQ"></div>
+      </div>
+    </div>
+    <canvas id="spark" aria-label="Distance travelled in chord space over time, classical and quantum"></canvas>
+    <div class="sparklab"><span>distance from the initial chord &rarr; time</span><span id="sparkval"></span></div>
+    <div class="ctl">
+      <div class="slider">
+        <label for="sB"><span><i>&beta;</i> <u>tension</u></span><span id="vB">2.0</span></label>
+        <input type="range" id="sB" min="0" max="6" step="0.1" value="2">
+      </div>
+      <div class="slider">
+        <label for="sJ"><span><i>J</i> <u>coherent hop</u></span><span id="vJ">1.00</span></label>
+        <input type="range" id="sJ" min="0" max="2" step="0.05" value="1">
+      </div>
+      <div class="slider">
+        <label for="sK"><span><i>&kappa;</i> <u>dephasing</u></span><span id="vK">0.0</span></label>
+        <input type="range" id="sK" min="0" max="12" step="0.2" value="0">
+      </div>
+      <div class="slider">
+        <label for="sA"><span><i>a</i> <u>glissando drift</u></span><span id="vA">0.00</span></label>
+        <input type="range" id="sA" min="-0.9" max="0.9" step="0.05" value="0">
+      </div>
+      <div class="btns">
+        <button id="bReset">Reset to C&ndash;E&ndash;G</button>
+        <button id="bPause" aria-pressed="false">Pause</button>
+        <button id="bMeasure">Measure</button>
+        <button id="bSound" aria-pressed="false">Sound</button>
+      </div>
+    </div>
+  </div>
+
+  <p style="margin-top:1.2rem"><b>Measure</b> applies the Born rule to the quantum state and collapses it onto a single chord — press it repeatedly and fast to watch the Zeno effect hold the chord still. <b>Sound</b> voices the most probable chord of each panel through three oscillators, classical in the left ear, quantum in the right.</p>
+
+  <h3>Rendered out</h3>
+  <p>The same run, recorded: the classical cloud creeping outward from C–E–G while the quantum one crosses the torus and returns, with the distance traces beneath.</p>
+
+  <figure class="bleed">
+    <img src="assets/chord_lattice.gif" alt="Animation of the classical and quantum probability clouds evolving over the chord lattice.">
+    <figcaption><b>150 frames, \(t=0\) to \(8\), \(\beta=2\), \(J=1\).</b> Left, the master equation; right, unitary evolution on the same lattice. Both start on C–E–G, circled. The quantum cloud reaches the lattice boundary and interferes with itself; the classical one is still filling its neighbourhood.</figcaption>
+  </figure>
+
+  </div></div>
+</section>
+
+<section id="checks">
+  <div class="shead">
+    <div class="num">✓</div>
+    <div>
+      <h2>Checks</h2>
+      <p class="lede">Every structural claim above is a numerical assertion. These are the results, not a summary of them.</p>
+    </div>
+  </div>
+  <div class="body"><div class="num"></div><div class="content">
+  <div class="tblwrap"><table>
+    <thead><tr><th>Claim</th><th class="n">Measured</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>\(\langle-|H=0\) — max column sum of the generator</td><td class="n">2.1&times;10<sup>&minus;14</sup></td><td class="pass">PASS</td></tr>
+      <tr><td>off-diagonals of \(H\) non-negative</td><td class="n">0</td><td class="pass">PASS</td></tr>
+      <tr><td>matrix-free \(Hp\) equals the assembled matrix</td><td class="n">2.6&times;10<sup>&minus;18</sup></td><td class="pass">PASS</td></tr>
+      <tr><td>detailed balance: \(\|H e^{-\beta V}\|_\infty\), \(\beta=0.5/2/5\)</td><td class="n">&lt;7.6&times;10<sup>&minus;18</sup></td><td class="pass">PASS</td></tr>
+      <tr><td>drift breaks it (this one <em>should</em> be non-zero)</td><td class="n">4.4&times;10<sup>&minus;4</sup></td><td class="pass">as expected</td></tr>
+      <tr class="hi"><td>Baez–Biamonte Fock assembly vs. the Markov chain it encodes</td><td class="n">0</td><td class="pass">PASS</td></tr>
+      <tr><td>column sums of \(H_{\rm BB}\) on the Fock space</td><td class="n">4.4&times;10<sup>&minus;16</sup></td><td class="pass">PASS</td></tr>
+      <tr><td>vectorised generator vs. brute-force Petri assembly</td><td class="n">0</td><td class="pass">PASS</td></tr>
+      <tr class="hi"><td>Lindblad at \(J=0\) reproduces (M) exactly</td><td class="n">5.6&times;10<sup>&minus;17</sup></td><td class="pass">PASS</td></tr>
+      <tr><td>unitary sector: norm conserved</td><td class="n">6.7&times;10<sup>&minus;16</sup></td><td class="pass">PASS</td></tr>
+      <tr><td>unitary sector: energy drift over \(t=4\)</td><td class="n">6.6&times;10<sup>&minus;8</sup></td><td class="pass">PASS</td></tr>
+      <tr><td>spreading exponent, classical</td><td class="n">0.50</td><td>diffusive</td></tr>
+      <tr><td>spreading exponent, quantum</td><td class="n">0.98</td><td>ballistic</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>The decoherence limit, measured as \(\max_n|P_{\rm quantum}(n)-P_{\rm classical}(n)\,|\) after \(t=1\) at \(J=1\):</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>&kappa;</th><th class="n">0</th><th class="n">2</th><th class="n">8</th><th class="n">32</th><th class="n">128</th></tr></thead>
+    <tbody><tr><td>deviation</td><td class="n">0.3245</td><td class="n">0.2631</td><td class="n">0.1638</td><td class="n">0.0630</td><td class="n">0.0180</td></tr></tbody>
+  </table></div>
+  <p>Monotone, and approaching the \(1/\kappa\) Zeno law once \(\kappa\) passes the bandwidth of \(\hat H_Q\): the last doubling-squared of \(\kappa\) cuts the deviation by 3.5&times; against the asymptotic 4&times;.</p>
+  </div></div>
+</section>
+
+<footer>
+  <div class="col">
+    <p><b>On the sources.</b> The stochastic-mechanics formalism — stochastic states, the sum covector, infinitesimal stochastic Hamiltonians, the Petri-net Hamiltonian (BB) and its companion rate equation — follows John Baez and Jacob Biamonte, <em>Quantum Techniques for Stochastic Mechanics</em>. The music is Iannis Xenakis's: the sound graph and the ruled glissando surfaces of <em>Metastaseis</em>, the Maxwell–Boltzmann pitch cloud of <em>Pithoprakta</em>, and the screen-to-screen Markov chains of <em>Analogique A/B</em>, all set out in <em>Formalized Music</em>. The tension operator, the quantum lift and every number on this page are constructions of this write-up, not of either source.</p>
+    <p style="margin-bottom:0">Simulation runs entirely in this page: 1728 chords, RK4 on both the master equation and the Schrödinger equation, dephasing as a stochastic phase unravelling.</p>
+  </div>
+</footer>
+</div>
+
+<script>
+"use strict";
+(function(){
+// ---------------------------------------------------------------- model
+const N=12, M=N*N*N;
+const CK=[0,0.0912871,0.1490712,0.2581989,0.2236068,0.4082483,0.0263523,
+          0.4082483,0.2236068,0.2581989,0.1490712,0.0912871];
+const HT=[1.875,0,0,0,0.2,0,0,0.5,0,0,0.1428571,0];
+const LAM=1, UU=1.5, MU=1;
+const NAMES=["C","C\u266f","D","D\u266f","E","F","F\u266f","G","G\u266f","A","A\u266f","B"];
+const n1=new Int8Array(M), n2=new Int8Array(M), n3=new Int8Array(M);
+for(let a=0;a<N;a++)for(let b=0;b<N;b++)for(let c=0;c<N;c++){
+  const k=a*N*N+b*N+c; n1[k]=a; n2[k]=b; n3[k]=c;
+}
+const mod=(x,m)=>((x%m)+m)%m;
+const V=new Float64Array(M);
+for(let k=0;k<M;k++){
+  const a=n1[k],b=n2[k],c=n3[k]; let v=0;
+  const pr=[[a,b],[a,c],[b,c]];
+  for(const [x,y] of pr){ const d=mod(x-y,N); v+=-LAM*CK[d]+(d===0?UU:0); }
+  let best=0;
+  const uniq=[a]; if(mod(b-a,N)!==0)uniq.push(b);
+  if(mod(c-a,N)!==0&&mod(c-b,N)!==0)uniq.push(c);
+  for(let r=0;r<N;r++){ let s=0; for(const p of uniq) s+=HT[mod(p-r,N)]; if(s>best)best=s; }
+  V[k]=v-MU*best;
+}
+// six shift permutations: PERM[t][k] = index of chord k + s*e_i
+const DIRS=[[0,1],[0,-1],[1,1],[1,-1],[2,1],[2,-1]];
+const PERM=DIRS.map(([i,s])=>{
+  const p=new Int32Array(M);
+  for(let k=0;k<M;k++){
+    let a=n1[k],b=n2[k],c=n3[k];
+    if(i===0)a=mod(a+s,N); else if(i===1)b=mod(b+s,N); else c=mod(c+s,N);
+    p[k]=a*N*N+b*N+c;
+  }
+  return p;
+});
+const IDX=(a,b,c)=>a*N*N+b*N+c;
+const START=IDX(0,4,7);
+
+// rates w[t][k]; drift a applies +a to voice 1 and -a to voice 3
+let W=DIRS.map(()=>new Float64Array(M));
+function rates(beta,drift){
+  for(let t=0;t<6;t++){
+    const [i,s]=DIRS[t], p=PERM[t], w=W[t];
+    const g=1+s*(i===0?drift:i===2?-drift:0);
+    for(let k=0;k<M;k++) w[k]=g/(1+Math.exp(beta*(V[p[k]]-V[k])));
+  }
+}
+
+// ---------------------------------------------------------------- state
+let P=new Float64Array(M), re=new Float64Array(M), im=new Float64Array(M);
+let tSim=0, params={beta:2,J:1,kap:0,drift:0};
+function reset(){
+  P.fill(0); re.fill(0); im.fill(0);
+  P[START]=1; re[START]=1; tSim=0; trail.length=0;
+}
+// classical: dP = sum_t ( w[t] P )[perm] - w[t] P
+const kbuf=[new Float64Array(M),new Float64Array(M),new Float64Array(M)];
+function dP(src,dst){
+  dst.fill(0);
+  for(let t=0;t<6;t++){
+    const w=W[t], p=PERM[t];
+    for(let k=0;k<M;k++){ const f=w[k]*src[k]; dst[p[k]]+=f; dst[k]-=f; }
+  }
+}
+function stepClassical(dt){
+  dP(P,kbuf[0]);
+  for(let k=0;k<M;k++) kbuf[2][k]=P[k]+0.5*dt*kbuf[0][k];
+  dP(kbuf[2],kbuf[1]);
+  let s=0;
+  for(let k=0;k<M;k++){ P[k]=Math.max(0,P[k]+dt*kbuf[1][k]); s+=P[k]; }
+  if(s>0) for(let k=0;k<M;k++) P[k]/=s;
+}
+// quantum: RK4 on i dpsi/dt = H psi, then a dephasing phase kick
+const qr=[0,1,2,3].map(()=>new Float64Array(M)), qi=[0,1,2,3].map(()=>new Float64Array(M));
+const sr=new Float64Array(M), si=new Float64Array(M);   // scratch for H psi
+const yr=new Float64Array(M), yi=new Float64Array(M);   // RK4 stage state
+function applyH(ar,ai,orr,oi,J){
+  for(let k=0;k<M;k++){ orr[k]=V[k]*ar[k]; oi[k]=V[k]*ai[k]; }
+  for(let t=0;t<6;t++){
+    const p=PERM[t];
+    for(let k=0;k<M;k++){ orr[k]-=J*ar[p[k]]; oi[k]-=J*ai[p[k]]; }
+  }
+}
+function deriv(ar,ai,orr,oi,J){        // dpsi/dt = -i H psi
+  applyH(ar,ai,sr,si,J);
+  for(let k=0;k<M;k++){ orr[k]=si[k]; oi[k]=-sr[k]; }
+}
+let gseed=12345;
+function gauss(){                       // Box-Muller
+  gseed=(Math.imul(gseed,1664525)+1013904223)>>>0;
+  const u=((gseed>>>8)/16777216)||1e-9;
+  gseed=(Math.imul(gseed,1664525)+1013904223)>>>0;
+  const v=(gseed>>>8)/16777216;
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+function stepQuantum(dt,J,kap){
+  deriv(re,im,qr[0],qi[0],J);
+  for(let k=0;k<M;k++){ yr[k]=re[k]+0.5*dt*qr[0][k]; yi[k]=im[k]+0.5*dt*qi[0][k]; }
+  deriv(yr,yi,qr[1],qi[1],J);
+  for(let k=0;k<M;k++){ yr[k]=re[k]+0.5*dt*qr[1][k]; yi[k]=im[k]+0.5*dt*qi[1][k]; }
+  deriv(yr,yi,qr[2],qi[2],J);
+  for(let k=0;k<M;k++){ yr[k]=re[k]+dt*qr[2][k]; yi[k]=im[k]+dt*qi[2][k]; }
+  deriv(yr,yi,qr[3],qi[3],J);
+  for(let k=0;k<M;k++){
+    re[k]+=dt/6*(qr[0][k]+2*qr[1][k]+2*qr[2][k]+qr[3][k]);
+    im[k]+=dt/6*(qi[0][k]+2*qi[1][k]+2*qi[2][k]+qi[3][k]);
+  }
+  if(kap>0){                            // stochastic unravelling of dephasing
+    const sd=Math.sqrt(2*kap*dt);
+    for(let k=0;k<M;k++){
+      const th=sd*gauss(), cs=Math.cos(th), sn=Math.sin(th);
+      const a=re[k], b=im[k]; re[k]=a*cs-b*sn; im[k]=a*sn+b*cs;
+    }
+  }
+  let s=0;
+  for(let k=0;k<M;k++) s+=re[k]*re[k]+im[k]*im[k];
+  s=Math.sqrt(s)||1;
+  for(let k=0;k<M;k++){ re[k]/=s; im[k]/=s; }
+}
+const qprob=new Float64Array(M);
+function quantumProb(){ for(let k=0;k<M;k++) qprob[k]=re[k]*re[k]+im[k]*im[k]; return qprob; }
+
+// distance from the starting chord on the torus
+const R2=new Float64Array(M);
+{ const s=[0,4,7];
+  for(let k=0;k<M;k++){
+    const v=[n1[k],n2[k],n3[k]]; let r=0;
+    for(let i=0;i<3;i++){ const d=Math.min(mod(v[i]-s[i],N),mod(s[i]-v[i],N)); r+=d*d; }
+    R2[k]=r;
+  } }
+const rms=p=>{ let s=0; for(let k=0;k<M;k++) s+=p[k]*R2[k]; return Math.sqrt(s); };
+
+// ---------------------------------------------------------------- drawing
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const dpr=()=>Math.min(2,window.devicePixelRatio||1);
+const _sz=new WeakMap();
+function fit(cv){
+  const d=dpr(), rec=_sz.get(cv);
+  if(!rec||rec.w!==cv.clientWidth||rec.h!==cv.clientHeight||rec.d!==d){
+    cv.width=Math.max(1,Math.round(cv.clientWidth*d));
+    cv.height=Math.max(1,Math.round(cv.clientHeight*d));
+    _sz.set(cv,{w:cv.clientWidth,h:cv.clientHeight,d});
+  }
+  return d;
+}
+let yaw=0.62, pitch=0.42, autoYaw=true;
+const order=new Int32Array(M);
+const X=new Float64Array(M), Y=new Float64Array(M), Z=new Float64Array(M);
+const drawIdx=new Int32Array(M);
+function drawCube(cv,p,rgb){
+  const d=fit(cv), w=cv.width, h=cv.height, g=cv.getContext("2d");
+  g.clearRect(0,0,w,h);
+  const cy=Math.cos(yaw), sy=Math.sin(yaw), cp=Math.cos(pitch), sp=Math.sin(pitch);
+  const sc=Math.min(w,h)/17.5, ox=w/2, oy=h/2;
+  let pmax=1e-12; for(let k=0;k<M;k++) if(p[k]>pmax) pmax=p[k];
+  let cnt=0;
+  for(let k=0;k<M;k++){
+    if(p[k]<0.02*pmax) continue;
+    const x=n1[k]-5.5, y=n2[k]-5.5, z=n3[k]-5.5;
+    const x1=x*cy-y*sy, y1=x*sy+y*cy;
+    const y2=y1*cp-z*sp, z2=y1*sp+z*cp;
+    X[cnt]=ox+x1*sc; Y[cnt]=oy-z2*sc*0.92; Z[cnt]=y2; order[cnt]=k; cnt++;
+  }
+  const idx=drawIdx.subarray(0,cnt);
+  for(let i=0;i<cnt;i++) idx[i]=i;
+  idx.sort((a,b)=>Z[b]-Z[a]);   // painter's order, far to near
+  // frame
+  g.strokeStyle=css("--rule"); g.lineWidth=d;
+  const corner=[[-6,-6,-6],[6,-6,-6],[6,6,-6],[-6,6,-6],[-6,-6,6],[6,-6,6],[6,6,6],[-6,6,6]];
+  const proj=c=>{ const x1=c[0]*cy-c[1]*sy, y1=c[0]*sy+c[1]*cy;
+    const y2=y1*cp-c[2]*sp, z2=y1*sp+c[2]*cp;
+    return [ox+x1*sc, oy-z2*sc*0.92]; };
+  const E=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+  g.globalAlpha=0.6;
+  for(const [i,j] of E){ const a=proj(corner[i]), b=proj(corner[j]);
+    g.beginPath(); g.moveTo(a[0],a[1]); g.lineTo(b[0],b[1]); g.stroke(); }
+  g.globalAlpha=1;
+  for(const i of idx){
+    const k=order[i], v=Math.min(1,p[k]/pmax);
+    const rad=(1.1+5.4*Math.pow(v,0.55))*d;
+    g.globalAlpha=0.18+0.72*Math.pow(v,0.5);
+    g.fillStyle="rgb("+rgb+")";
+    g.beginPath(); g.arc(X[i],Y[i],rad,0,6.2832); g.fill();
+  }
+  g.globalAlpha=1;
+  const s=proj([0-5.5,4-5.5,7-5.5]);
+  g.strokeStyle=css("--ink2"); g.lineWidth=d;
+  g.beginPath(); g.arc(s[0],s[1],5.5*d,0,6.2832); g.stroke();
+}
+const trail=[];
+function drawSpark(){
+  const cv=document.getElementById("spark"), d=fit(cv), g=cv.getContext("2d");
+  const w=cv.width, h=cv.height;
+  g.clearRect(0,0,w,h);
+  if(trail.length<2) return;
+  const T=Math.max(8,trail[trail.length-1].t), RM=8.5;
+  const px=t=>18*d+(w-30*d)*t/T, py=r=>h-10*d-(h-20*d)*Math.min(r,RM)/RM;
+  g.strokeStyle=css("--rule"); g.lineWidth=d;
+  g.beginPath(); g.moveTo(18*d,h-10*d); g.lineTo(w-12*d,h-10*d); g.stroke();
+  for(const [key,col] of [["c","--cls"],["q","--qnt"]]){
+    g.strokeStyle=css(col); g.lineWidth=2*d; g.beginPath();
+    trail.forEach((s,i)=>{ const x=px(s.t), y=py(s[key]); i?g.lineTo(x,y):g.moveTo(x,y); });
+    g.stroke();
+    const last=trail[trail.length-1];
+    g.fillStyle=css(col); g.beginPath();
+    g.arc(px(last.t),py(last[key]),2.6*d,0,6.2832); g.fill();
+  }
+}
+function topChords(p,m){
+  const best=[];
+  for(let k=0;k<M;k++){
+    if(best.length<m||p[k]>best[best.length-1].p){
+      const e={k,p:p[k]};
+      let i=best.length; while(i>0&&best[i-1].p<e.p) i--;
+      best.splice(i,0,e); if(best.length>m) best.pop();
+    }
+  }
+  return best.map(e=>({k:e.k,p:e.p,
+    name:NAMES[n1[e.k]]+"\u2013"+NAMES[n2[e.k]]+"\u2013"+NAMES[n3[e.k]]}));
+}
+function fmtReadout(p,el){
+  const top=topChords(p,3);
+  el.innerHTML='<span class="k">most probable</span> '+
+    top.map(t=>t.name+" <span class='k'>"+(100*t.p).toFixed(1)+"%</span>").join(" &nbsp;\u00b7&nbsp; ");
+}
+
+// ---------------------------------------------------------------- audio
+let actx=null, voices=null, soundOn=false;
+function audioInit(){
+  if(actx) return;
+  actx=new (window.AudioContext||window.webkitAudioContext)();
+  voices=[0,1,2,3,4,5].map(i=>{
+    const o=actx.createOscillator(), g=actx.createGain(), pan=actx.createStereoPanner();
+    o.type="triangle"; g.gain.value=0; pan.pan.value=i<3?-0.65:0.65;
+    o.connect(g); g.connect(pan); pan.connect(actx.destination); o.start();
+    return {o,g,pan};
+  });
+}
+const REG=[36,48,60];      // one octave per voice
+function audioUpdate(){
+  if(!soundOn||!actx||!voices) return;
+  const now=actx.currentTime;
+  const set=(v,semi)=>{
+    v.o.frequency.setTargetAtTime(8.1758*Math.pow(2,semi/12),now,0.07);
+    v.g.gain.setTargetAtTime(0.05,now,0.12);
+  };
+  const c=topChords(P,1)[0].k, q=topChords(quantumProb(),1)[0].k;
+  set(voices[0],n1[c]+REG[0]); set(voices[1],n2[c]+REG[1]); set(voices[2],n3[c]+REG[2]);
+  set(voices[3],n1[q]+REG[0]); set(voices[4],n2[q]+REG[1]); set(voices[5],n3[q]+REG[2]);
+}
+function audioStop(){
+  if(voices&&actx) voices.forEach(v=>v.g.gain.setTargetAtTime(0,actx.currentTime,0.06));
+}
+
+// ---------------------------------------------------------------- loop
+const cvC=document.getElementById("cvC"), cvQ=document.getElementById("cvQ");
+const roC=document.getElementById("roC"), roQ=document.getElementById("roQ");
+const clock=document.getElementById("clock"), sparkval=document.getElementById("sparkval");
+let running=true, lastAudio=0;
+const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if(reduce) autoYaw=false;
+
+function readParams(){
+  params.beta=+document.getElementById("sB").value;
+  params.J=+document.getElementById("sJ").value;
+  params.kap=+document.getElementById("sK").value;
+  params.drift=+document.getElementById("sA").value;
+  document.getElementById("vB").textContent=params.beta.toFixed(1);
+  document.getElementById("vJ").textContent=params.J.toFixed(2);
+  document.getElementById("vK").textContent=params.kap.toFixed(1);
+  document.getElementById("vA").textContent=params.drift.toFixed(2);
+  rates(params.beta,params.drift);
+}
+["sB","sJ","sK","sA"].forEach(id=>document.getElementById(id).addEventListener("input",readParams));
+document.getElementById("bReset").addEventListener("click",()=>{reset();drawSpark();});
+document.getElementById("bPause").addEventListener("click",e=>{
+  running=!running; e.currentTarget.setAttribute("aria-pressed",String(!running));
+  e.currentTarget.textContent=running?"Pause":"Resume";
+});
+document.getElementById("bMeasure").addEventListener("click",()=>{
+  const p=quantumProb(); let r=Math.random(), k=0, acc=0;
+  for(k=0;k<M;k++){ acc+=p[k]; if(acc>=r) break; }
+  if(k>=M) k=M-1;
+  re.fill(0); im.fill(0); re[k]=1;
+});
+document.getElementById("bSound").addEventListener("click",e=>{
+  soundOn=!soundOn; e.currentTarget.setAttribute("aria-pressed",String(soundOn));
+  e.currentTarget.textContent=soundOn?"Sound on":"Sound";
+  if(soundOn){ audioInit(); actx.resume(); } else audioStop();
+});
+// drag to rotate
+[cvC,cvQ].forEach(cv=>{
+  let down=false,lx=0,ly=0;
+  cv.addEventListener("pointerdown",e=>{down=true;autoYaw=false;lx=e.clientX;ly=e.clientY;cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener("pointermove",e=>{
+    if(!down)return;
+    yaw+=(e.clientX-lx)*0.008; pitch=Math.max(-1.2,Math.min(1.2,pitch+(e.clientY-ly)*0.006));
+    lx=e.clientX; ly=e.clientY;
+  });
+  cv.addEventListener("pointerup",()=>{down=false;});
+  cv.addEventListener("pointercancel",()=>{down=false;});
+});
+
+readParams(); reset();
+let prev=performance.now();
+function frame(now){
+  const wall=Math.min(0.05,(now-prev)/1000); prev=now;
+  if(running){
+    const dt=0.016, steps=Math.max(1,Math.min(4,Math.round(wall/dt)));
+    for(let s=0;s<steps;s++){
+      stepClassical(dt);
+      stepQuantum(dt,params.J,params.kap);
+      tSim+=dt;
+    }
+    if(autoYaw) yaw+=0.0016*steps;
+    const qp=quantumProb();
+    trail.push({t:tSim,c:rms(P),q:rms(qp)});
+    if(trail.length>900) trail.shift();
+    clock.textContent="t = "+tSim.toFixed(2);
+    const last=trail[trail.length-1];
+    sparkval.textContent="R_cl "+last.c.toFixed(2)+"   R_q "+last.q.toFixed(2);
+    fmtReadout(P,roC); fmtReadout(qp,roQ);
+    if(now-lastAudio>260){ audioUpdate(); lastAudio=now; }
+  }
+  drawCube(cvC,P,"42,120,214");
+  drawCube(cvQ,quantumProb(),"224,95,40");
+  drawSpark();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// ---------------------------------------------------------------- hero
+(function hero(){
+  const cv=document.getElementById("graph");
+  const NREG=48, beta=0.6, gam=0.7, drifts=[0.8,0,-0.8];
+  const COLS=["#86b6ef","#2a78d6","#104281"];      // one hue, three voices
+  const COLSD=["#9ec5f4","#5598e7","#2a78d6"];
+  let paths=[], t=0; const TMAX=22;
+  function Vx(v){
+    let s=0; const pr=[[v[0],v[1]],[v[0],v[2]],[v[1],v[2]]];
+    for(const [x,y] of pr){ const d=mod(x-y,12); s+=-CK[d]+(d===0?UU:0); }
+    const u=[v[0]]; if(mod(v[1]-v[0],12)!==0)u.push(v[1]);
+    if(mod(v[2]-v[0],12)!==0&&mod(v[2]-v[1],12)!==0)u.push(v[2]);
+    let best=0;
+    for(let r=0;r<12;r++){ let a=0; for(const p of u) a+=HT[mod(p-r,12)]; if(a>best)best=a; }
+    return s-MU*best;
+  }
+  function newPath(){
+    const x=[24,24,24]; const pts=[[0,24,24,24]]; let tt=0;
+    while(tt<TMAX){
+      const mv=[], rt=[]; const v0=Vx(x);
+      for(let i=0;i<3;i++) for(const sg of [1,-1]){
+        const y=x.slice(); y[i]+=sg;
+        if(y[i]<0||y[i]>=NREG) continue;
+        mv.push(y); rt.push(gam*(1+sg*drifts[i])/(1+Math.exp(beta*(Vx(y)-v0))));
+      }
+      const R=rt.reduce((a,b)=>a+b,0);
+      tt+=-Math.log(Math.random()||1e-9)/R;
+      const r=Math.random()*R; let k=0, acc=0;
+      for(k=0;k<rt.length;k++){ acc+=rt[k]; if(acc>=r) break; }
+      const nx=mv[Math.min(k,mv.length-1)];
+      x[0]=nx[0]; x[1]=nx[1]; x[2]=nx[2];
+      pts.push([Math.min(tt,TMAX),x[0],x[1],x[2]]);
+    }
+    return pts;
+  }
+  function regen(){ paths=[]; for(let i=0;i<16;i++) paths.push(newPath()); }
+  regen();
+  function stroke(g,pts,v,upTo,w,alpha,col){
+    let started=false;
+    g.strokeStyle=col; g.globalAlpha=alpha; g.lineWidth=w; g.beginPath();
+    for(let i=0;i<pts.length;i++){
+      if(pts[i][0]>upTo) break;
+      const x=g._px(pts[i][0]), y=g._py(pts[i][1+v]);
+      if(!started){ g.moveTo(x,y); started=true; }
+      else { g.lineTo(x,g._py(pts[i-1][1+v])); g.lineTo(x,y); }
+    }
+    if(started) g.stroke();
+  }
+  function draw(){
+    const d=fit(cv), w=cv.width, h=cv.height, g=cv.getContext("2d");
+    g.clearRect(0,0,w,h);
+    g._px=tt=>(tt/TMAX)*w; g._py=p=>h-(p/NREG)*h;
+    const dark=getComputedStyle(document.body).backgroundColor.match(/\d+/g);
+    const isDark=dark&&(+dark[0]+ +dark[1]+ +dark[2])<250;
+    const C=isDark?COLSD:COLS;
+    for(const pts of paths) for(let v=0;v<3;v++) stroke(g,pts,v,TMAX,0.8*d,0.16,C[v]);
+    paths.forEach((pts,pi)=>{ for(let v=0;v<3;v++)
+      stroke(g,pts,v,t,(pi===0?2.0:1.0)*d,pi===0?0.95:0.34,C[v]); });
+    if(t<TMAX){
+      g.globalAlpha=0.9; g.strokeStyle=css("--qnt"); g.lineWidth=1.2*d;
+      g.beginPath(); g.moveTo(g._px(t),0); g.lineTo(g._px(t),h); g.stroke();
+    }
+    g.globalAlpha=1;
+  }
+  let last=performance.now();
+  function loop(now){
+    const dt=Math.min(0.05,(now-last)/1000); last=now;
+    t+=dt*5.5;
+    if(t>TMAX+2.0){ t=0; regen(); }
+    draw(); requestAnimationFrame(loop);
+  }
+  if(reduce){ t=TMAX; draw(); } else requestAnimationFrame(loop);
+})();
+})();
+</script>

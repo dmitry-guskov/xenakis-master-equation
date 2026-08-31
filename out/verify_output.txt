@@ -1,0 +1,37 @@
+
+[1] the generator is infinitesimal stochastic (Baez-Biamonte, Def. of a stochastic Hamiltonian)
+  PASS  max |column sum|   (<-|H = 0, probability conserved)     9.992e-16
+  PASS  max(0, -min off-diagonal)   (off-diagonals >= 0)         0.000e+00
+  PASS  || H p  -  matrix-free Hp ||_inf                         2.602e-18
+
+[2] detailed balance: drift = 0  =>  stationary state is Boltzmann e^{-beta V}
+  PASS  || H p_Boltzmann ||_inf  at beta = 0.5                   7.589e-19
+  PASS  || H p_Boltzmann ||_inf  at beta = 2.0                   8.674e-19
+  PASS  || H p_Boltzmann ||_inf  at beta = 5.0                   7.603e-18
+        drift != 0 breaks it:  ||H p_B|| = 4.411e-04   (a steady current -- that is the glissando)
+
+[3] Baez-Biamonte Fock-space assembly vs. the Markov chain it encodes
+  PASS  || H_BaezBiamonte - H_MarkovChain ||_inf                 0.000e+00
+  PASS  max |column sum| of H_BaezBiamonte                       4.441e-16
+
+[4] the chord generator equals its brute-force Petri-net assembly
+  PASS  || H_vectorised - H_bruteforce ||_inf                    0.000e+00
+
+[5] quantum lift, J = 0: populations follow the classical chain exactly
+  PASS  max |P_quantum(J=0) - P_classical|                       5.551e-17
+
+[6] decoherence limit: kappa -> infinity recovers the classical chain
+      kappa =    0.0    max |P_q - P_cl| = 0.3245  <- coherent transport dominates
+      kappa =    2.0    max |P_q - P_cl| = 0.2631
+      kappa =    8.0    max |P_q - P_cl| = 0.1638
+      kappa =   32.0    max |P_q - P_cl| = 0.0630
+      kappa =  128.0    max |P_q - P_cl| = 0.0180
+      (2260s)
+
+[7] unitary sector: norm and energy conserved; spreading is ballistic
+  PASS  max |1 - norm|                                           6.661e-16
+  FAIL  max |E(t) - E(0)| / |E(0)|                               5.258e-06
+      quantum  R(t): 0.977 -> 2.866   slope in log-log = 0.98  (ballistic ~ 1)
+      classical R(t): 0.849 -> 1.474   slope in log-log = 0.50  (diffusive ~ 0.5)
+
+Done.

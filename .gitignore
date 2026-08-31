@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.log
+.DS_Store
+
+# generated: `python figures.py && python anim.py && python sonify.py` rebuilds these.
+# The write-up's copies live in docs/assets/ and are tracked.
+out/*.png
+out/*.gif
+out/*.mp4
+out/*.wav
+out/anim_data.npz
+
+# generated: `python build_page.py`
+xenakis_master_equation.html
