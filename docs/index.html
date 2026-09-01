@@ -260,10 +260,16 @@ footer .col{max-width:74ch}
         <label for="gG"><span><i>&gamma;</i> <u>tempo</u></span><span id="gvG">0.70</span></label>
         <input type="range" id="gG" min="0.2" max="2" step="0.05" value="0.7">
       </div>
+      <div class="slider">
+        <label for="gT"><span><i>&tau;</i> <u>velocity memory</u></span><span id="gvT">&infin;</span></label>
+        <input type="range" id="gT" min="0.5" max="12.5" step="0.5" value="12.5">
+      </div>
       <div class="btns">
-        <button id="gP1">Pithoprakta</button>
+        <button id="gP0">Brownian</button>
         <button id="gP2">Metastaseis</button>
+        <button id="gP1">Pithoprakta</button>
         <button id="gP3">Harmony</button>
+        <button id="gSpread" aria-pressed="false" title="Start the voices spread across the register, as forty-six players are spread across their ranges, instead of all on one pitch">Spread start</button>
         <button id="gDens" aria-pressed="false" title="Show the ensemble as a probability density over pitch and time instead of as individual paths">Density</button>
         <button id="gSound" aria-pressed="false" title="Play the highlighted trio: voice 1 left, voice 2 centre, voice 3 right">Sound</button>
         <button id="gRe">Redraw</button>
@@ -271,7 +277,7 @@ footer .col{max-width:74ch}
       </div>
     </div>
   </div>
-  <figcaption><b>Three regimes of one equation, and both of its faces.</b> Each line is one voice &mdash; blue drifting up at \(+a\), orange free, green drifting down at \(-a\); the faint bundle behind is 240 independent realisations, of which the heavy trio is one. <b>Pithoprakta</b> sets \(\beta=0\) and the drift to zero: free diffusion, the cloud widening as \(\sqrt{\gamma t}\), the voices indifferent to one another. <b>Metastaseis</b> restores the drift at \(\pm0.8\) and the bundle opens into the ruled fan. <b>Harmony</b> raises \(\beta\) to 4 with no drift: the trio finds a consonant spacing within a few events and then moves as a body. <b>Density</b> switches from the paths to the thing (M) actually evolves &mdash; \(P(\text{pitch},t)\) over the whole ensemble, column-normalised, which is the cloud Xenakis was composing rather than any line in it. The strip below is the stationary distribution of the interval between voices, measured over the second half of every run: flat at \(\beta=0\), where every interval is about equally likely, and sharpening as \(\beta\) rises onto the fifth and its inversion the fourth &mdash; one interval class, since \(c\) is symmetrised &mdash; and then the thirds. <b>Sound</b> plays the highlighted trio, one voice per stereo position.</figcaption>
+  <figcaption><b>Three regimes of one equation, and both of its faces.</b> Each line is one voice &mdash; blue drifting up at \(+a\), orange free, green drifting down at \(-a\); the faint bundle behind is 240 independent realisations, of which the heavy trio is one. <b>Brownian</b> sets \(\beta=0\) and the drift to zero: free diffusion, the cloud widening as \(\sqrt{\gamma t}\), the voices indifferent to one another. <b>Metastaseis</b> restores the drift at \(\pm0.8\) and the bundle opens into the ruled fan. <b>Pithoprakta</b> is the velocity-jump construction of the 1956 sketch: voices spread across the register, no potential, and a finite velocity memory \(\tau\), so each line stays straight long enough for the family to fold — turn \(\tau\) down and the lenses dissolve into a diffusive wash, turn it to \(\infty\) and every line is straight for the whole run. <b>Harmony</b> raises \(\beta\) to 4 with no drift: the trio finds a consonant spacing within a few events and then moves as a body. <b>Density</b> switches from the paths to the thing (M) actually evolves &mdash; \(P(\text{pitch},t)\) over the whole ensemble, column-normalised, which is the cloud Xenakis was composing rather than any line in it. The strip below is the stationary distribution of the interval between voices, measured over the second half of every run: flat at \(\beta=0\), where every interval is about equally likely, and sharpening as \(\beta\) rises onto the fifth and its inversion the fourth &mdash; one interval class, since \(c\) is symmetrised &mdash; and then the thirds. <b>Sound</b> plays the highlighted trio, one voice per stereo position. At \(\tau=\infty\) the three drifts are fixed at \(+a,0,-a\) as the legend says; at any finite \(\tau\) every voice redraws its own velocity from the Maxwell–Boltzmann law of parameter \(a\).</figcaption>
   </figure>
 
   <h3>The tension operator</h3>
@@ -288,8 +294,36 @@ footer .col{max-width:74ch}
 
   <div class="eq"><div>\[ \partial_t P=-\sum_i \partial_i\Big[\Big(\gamma a_i-\tfrac{\gamma\beta}{2}\,\partial_i V\Big)P\Big]+\frac{\gamma}{2}\sum_i \partial_i^2 P \]</div></div>
 
-  <p>with mobility \(\gamma\beta/2\) and diffusion \(D=\gamma/2\), so \(D/\text{mobility}=1/\beta\): the Einstein relation holds and \(\beta\) is a temperature in the honest sense. Set \(V=0\) and you get exactly the picture Xenakis drew for <em>Pithoprakta</em> — a cloud of pitch spreading as \(\sqrt{\gamma t}\), with each voice's glissando velocity \(a_i\) drawn from a distribution. Drawing those \(a_i\) from a Maxwell–Boltzmann law recovers his construction verbatim; equation (M) is the generator that construction was a sampling of. Keeping \(V\) turns the free cloud into motion on a harmonic landscape, and taking the process on a discrete lattice in discrete time is the <em>Analogique A/B</em> screen chain.</p>
+  <p>with mobility \(\gamma\beta/2\) and diffusion \(D=\gamma/2\), so \(D/\text{mobility}=1/\beta\): the Einstein relation holds and \(\beta\) is a temperature in the honest sense. Set \(V=0\) and you get exactly the picture Xenakis drew for <em>Pithoprakta</em> — a cloud of pitch spreading as \(\sqrt{\gamma t}\), with each voice's glissando velocity \(a_i\) drawn from a distribution. Drawing those \(a_i\) from a Maxwell–Boltzmann law is his construction, up to one thing (M) throws away, which is the subject of the next subsection. Keeping \(V\) turns the free cloud into motion on a harmonic landscape, and taking the process on a discrete lattice in discrete time is the <em>Analogique A/B</em> screen chain.</p>
 
+  <h3>Why the sketch has loops</h3>
+
+  <p>The velocity sketch for <em>Pithoprakta</em> — pitch up, time across, the Gaussian \(f(x)=\tfrac{2}{\alpha\sqrt\pi}e^{-x^2/\alpha^2}\) and its parameter \(\alpha=35\) written in the margin, the scale fixed as five centimetres to the crotchet — has a feature the sound graphs above do not. The band of lines does not merely widen. It <em>folds</em>: it opens into lens-shaped voids with bright, sharply defined edges, closes again, and crosses itself. Loops.</p>
+
+  <p>No single line loops; a glissando is monotone within a segment. What loops is the <em>family</em>. Order the parts by starting pitch and let \(\xi\) index them, so the ensemble is a one-parameter family of straight lines \(x(t;\xi)=x_0(\xi)+v(\xi)\,t\). The density of lines at a point goes as \(|\partial x/\partial\xi|^{-1}\), and that Jacobian vanishes at</p>
+
+  <div class="eq"><div>\[ t^{*}(\xi)\;=\;-\,\frac{x_0'(\xi)}{v'(\xi)} \]</div></div>
+
+  <p>wherever \(x_0'\) and \(v'\) have opposite signs — wherever a stretch of the ensemble happens to be given velocities that decrease as the starting pitch increases. There the family folds and the line density diverges. The bright edge is a <b>caustic</b>, the same object as the bright curve at the bottom of a coffee cup, and the lens between two of them is the region covered twice. Draw forty-six velocities independently from a Maxwell–Boltzmann law and such stretches occur all over the sheet by chance; the register's finite width folds the band again at the top and bottom. That is the loop.</p>
+
+  <div class="note"><b>Caustics need memory of velocity, and (M) has none.</b> A fold at \(t^{*}\) requires the velocities to still be the velocities at \(t^{*}\) — the lines must stay straight long enough to cross. Xenakis holds each velocity for a whole time segment and redraws it at the next. Equation (M) redraws at every single event: the jump direction is resampled from the rates each time a voice moves, so nothing is remembered, no line stays straight, and no caustic can form. Our sound graphs have no loops because (M) is the <em>overdamped</em> limit of his construction.</div>
+
+  <p>The parameter that separates them is the velocity persistence \(\tau\). Hold a velocity for a mean time \(\tau\), then draw a fresh one with variance \(\sigma^2\); the velocity autocorrelation is \(\sigma^2e^{-t/\tau}\) and the spread is exactly</p>
+
+  <div class="eq"><div>\[ \langle x^2\rangle \;=\; 2\sigma^2\tau^2\Big(\frac{t}{\tau}-1+e^{-t/\tau}\Big)\;\longrightarrow\;\begin{cases}\sigma^2t^2 & t\ll\tau\quad\text{(ballistic — Xenakis)}\\[2pt] 2\sigma^2\tau\,t & t\gg\tau\quad\text{(diffusive — equation (M))}\end{cases} \]</div></div>
+
+  <p>so the two descriptions are one process seen at two time scales, and the dictionary between them is \(D=\sigma^2\tau\), i.e. \(\gamma/2=\sigma^2\tau\). Equation (M) is the limit \(\tau\to0\) at fixed \(D\). Keeping \(\tau\) finite means keeping velocity as a state variable — the Kramers description in phase space rather than the Smoluchowski one in pitch alone — and the caustics live in the phase-space picture, which is why they vanish from ours. <b>The loops in the sketch are the signature of underdamped dynamics.</b></p>
+
+  <figure class="bleed">
+    <img src="assets/fig_pithoprakta.png" alt="Two panels of forty-six piecewise-linear pitch trajectories. In the upper panel, with a long velocity memory, the lines stay straight for long stretches and the family folds into lens-shaped voids. In the lower panel, at the same diffusion constant but with a short memory, the paths are jagged and the voids are gone.">
+    <figcaption><b>The same diffusion constant, two velocity memories.</b> Forty-six parts, speeds drawn from the sheet's law \(f(s)=\tfrac{2}{\alpha\sqrt\pi}e^{-s^2/\alpha^2}\) at \(\alpha=35\), signs random, register edges reflecting. <b>Above</b>, \(\tau=3\): each part holds its velocity for a stretch, the lines stay straight long enough to cross, and the family folds — every void is a lens between two caustics, and this is the texture of the 1956 sketch. <b>Below</b>, \(\tau=0.25\) with \(\sigma^2\) raised to hold \(D=\sigma^2\tau\) fixed at 5.56, so the two panels spread at exactly the same long-time rate: the paths go jagged, the folds dissolve, and what is left is equation (M). Same seed, so the two start from the same forty-six pitches. Generated by <span class="mono">pithoprakta.py</span>, whose <span class="mono">--check</span> confirms \(\langle x^2\rangle\) against \(2\sigma^2\tau^2(t/\tau-1+e^{-t/\tau})\) to within 2.4% over the run. This is a reconstruction of the method, not a reproduction of the manuscript.</figcaption>
+  </figure>
+
+  <p>None of this leaves the framework. Enlarge the species from “voice \(i\) is on pitch \(p\)” to “voice \(i\) is on pitch \(p\) with velocity class \(u\)”, and add one transition per voice that changes \(u\) at rate \(1/\tau\) — a tumble. Every transition is still unary, so §02's Petri-net Hamiltonian and its companion rate equation go through unchanged; only the state space is bigger. Xenakis's construction is not outside (M), it is (M) on a phase space that (M) had integrated out.</p>
+
+  <p>Which is testable: the <b>Pithoprakta</b> preset in the explorer above sets \(\beta=0\), spreads the voices across the register the way forty-six players are spread across their ranges, and gives \(\tau\) a finite value. Turn \(\tau\) down and the lenses dissolve into the diffusive wash; turn it to \(\infty\) and every line is straight for the whole run. To reproduce the sketch offline at print resolution, <span class="mono">pithoprakta.py</span> in the repository runs the same velocity-jump process for forty-six parts and draws it on the same graph paper.</p>
+
+  <p class="mono" style="font-size:.72rem;color:var(--muted);max-width:70ch">The manuscript itself is only half generated, and honest reproduction should say so: the sheet carries crossed-out passages and alternative numbered takes in the margins. Xenakis sampled, looked, and chose. The caustics are the physics; the editing is the composer.</p>
 
   </div></div>
 </section>
@@ -944,10 +978,11 @@ requestAnimationFrame(frame);
 (function soundgraph(){
   const cv=document.getElementById("sg"); if(!cv) return;
   const hcv=document.getElementById("sgHist");
-  const NREG=48, TMAX=22, TB=180, NENS=240, NLINE=12, CAP=9000, P0=24;
+  const NREG=48, TMAX=22, TB=180, NENS=240, NDRAW=46, NLINE=12, CAP=12000, P0=24;
   const NAME=["unison","semitone","whole tone","minor third","major third",
               "fourth or fifth","tritone"];
-  const S={beta:0.6, drift:0.8, gam:0.7};
+  const S={beta:0.6, drift:0.8, gam:0.7, tau:12.5, spread:false};
+  const TAUINF=12.4;                        // slider top means "never redraw"
   const el=id=>document.getElementById(id);
   let paths=[], t=0, playing=true, dens=false, soundOn=false, pend=0;
   const dgrid=new Float32Array(TB*NREG), hist=new Float64Array(12);
@@ -957,9 +992,18 @@ requestAnimationFrame(frame);
   // real semitones, so fold the register away and look it up.
   const Vx=v=>V[IDX(mod(v[0],12),mod(v[1],12),mod(v[2],12))];
 
+  // Maxwell-Boltzmann speed f(s) = 2/(a*sqrt(pi)) exp(-s^2/a^2), random sign:
+  // a half-normal of width a/sqrt(2), which is what the sketch's alpha names.
+  function mb(){
+    let s=Math.abs(gauss())*S.drift/Math.SQRT2;
+    if(s>0.95) s=0.95;
+    return (Math.random()<0.5?-1:1)*s;
+  }
   function newPath(){                       // exact Gillespie on the same rates
-    const x=[P0,P0,P0], dr=[S.drift,0,-S.drift];
-    const pts=[[0,P0,P0,P0]]; let tt=0, it=0;
+    const inf=S.tau>TAUINF, tum=inf?0:1/S.tau;
+    const x=S.spread ? [0,0,0].map(()=>Math.floor(Math.random()*NREG)) : [P0,P0,P0];
+    const dr=inf ? [S.drift,0,-S.drift] : [mb(),mb(),mb()];
+    const pts=[[0,x[0],x[1],x[2]]]; let tt=0, it=0;
     while(tt<TMAX && it++<CAP){
       const mv=[], rt=[]; const v0=Vx(x);
       for(let i=0;i<3;i++) for(const sg of [1,-1]){
@@ -968,15 +1012,22 @@ requestAnimationFrame(frame);
         mv.push(y); rt.push(S.gam*(1+sg*dr[i])/(1+Math.exp(S.beta*(Vx(y)-v0))));
       }
       let R=0; for(const r of rt) R+=r;
-      if(R<=1e-12) break;
-      tt+=-Math.log(Math.random()||1e-9)/R;
-      const pick=Math.random()*R; let k=0, acc=0;
+      const RT=R+3*tum;                     // jumps and tumbles compete
+      if(RT<=1e-12) break;
+      tt+=-Math.log(Math.random()||1e-9)/RT;
+      if(tt>=TMAX) break;
+      const pick=Math.random()*RT;
+      if(pick>=R){                          // a tumble: new velocity, same pitch
+        dr[Math.min(2,Math.floor((pick-R)/tum))]=mb();
+        continue;
+      }
+      let k=0, acc=0;
       for(k=0;k<rt.length;k++){ acc+=rt[k]; if(acc>=pick) break; }
       const nx=mv[Math.min(k,mv.length-1)];
       x[0]=nx[0]; x[1]=nx[1]; x[2]=nx[2];
-      pts.push([Math.min(tt,TMAX),x[0],x[1],x[2]]);
+      pts.push([tt,x[0],x[1],x[2]]);
     }
-    if(pts[pts.length-1][0]<TMAX) pts.push([TMAX,x[0],x[1],x[2]]);
+    pts.push([TMAX,x[0],x[1],x[2]]);
     return pts;
   }
   function at(pts,tt){                       // state at time tt (binary search)
@@ -1066,8 +1117,8 @@ requestAnimationFrame(frame);
       g.globalAlpha=1;
       for(let v=0;v<3;v++) stroke(g,paths[0],v,t,1.4*d,0.85,C[v],px,py);
     }else{
-      for(let i=0;i<paths.length;i++) for(let v=0;v<3;v++)
-        stroke(g,paths[i],v,TMAX,0.8*d,i<NLINE?0.13:0.045,C[v],px,py);
+      for(let i=0;i<NDRAW&&i<paths.length;i++) for(let v=0;v<3;v++)
+        stroke(g,paths[i],v,TMAX,0.8*d,i<NLINE?0.15:0.11,C[v],px,py);
       for(let i=0;i<NLINE;i++) for(let v=0;v<3;v++)
         stroke(g,paths[i],v,t,(i===0?2.1:1.0)*d,i===0?0.95:0.3,C[v],px,py);
     }
@@ -1098,15 +1149,16 @@ requestAnimationFrame(frame);
     }
   }
   function readout(){
-    let s2=0, n=0, vv=0;
-    for(let i=0;i<NLINE&&i<paths.length;i++){
+    let s1=0, s2=0, n=0, vv=0;
+    for(let i=0;i<paths.length;i++){
       const q=at(paths[i],t);
-      for(let v=0;v<3;v++){ const dd=q[1+v]-P0; s2+=dd*dd; n++; }
+      for(let v=0;v<3;v++){ const y=q[1+v]; s1+=y; s2+=y*y; n++; }
       vv+=Vx([q[1],q[2],q[3]]);
     }
+    const mu=s1/Math.max(1,n);
     el("sgClock").textContent="t = "+t.toFixed(2);
-    el("sgRead").textContent="spread "+Math.sqrt(s2/Math.max(1,n)).toFixed(2)
-      +" st · ⟨V⟩ "+(vv/Math.min(NLINE,paths.length)).toFixed(2);
+    el("sgRead").textContent="spread "+Math.sqrt(Math.max(0,s2/Math.max(1,n)-mu*mu)).toFixed(2)
+      +" st · ⟨V⟩ "+(vv/Math.max(1,paths.length)).toFixed(2);
   }
   function regen(){
     paths=[]; for(let i=0;i<NENS;i++) paths.push(newPath());
@@ -1149,15 +1201,24 @@ requestAnimationFrame(frame);
     el("gvB").textContent=S.beta.toFixed(1);
     el("gvA").textContent=S.drift.toFixed(2);
     el("gvG").textContent=S.gam.toFixed(2);
-    el("gB").value=S.beta; el("gA").value=S.drift; el("gG").value=S.gam;
+    el("gvT").textContent=S.tau>TAUINF?"\u221e":S.tau.toFixed(1);
+    el("gB").value=S.beta; el("gA").value=S.drift;
+    el("gG").value=S.gam;  el("gT").value=S.tau;
+    const b=el("gSpread");
+    b.setAttribute("aria-pressed",String(S.spread));
   }
   el("gB").addEventListener("input",e=>{S.beta=+e.target.value; sync(); schedule();});
   el("gA").addEventListener("input",e=>{S.drift=+e.target.value; sync(); schedule();});
   el("gG").addEventListener("input",e=>{S.gam=+e.target.value; sync(); schedule();});
-  const preset=(b,a,gm)=>()=>{ S.beta=b; S.drift=a; S.gam=gm; sync(); regen(); };
-  el("gP1").addEventListener("click",preset(0,0,0.7));      // free pitch gas
-  el("gP2").addEventListener("click",preset(0.6,0.8,0.7));  // the ruled fan
-  el("gP3").addEventListener("click",preset(4,0,0.7));      // harmony wins
+  el("gT").addEventListener("input",e=>{S.tau=+e.target.value; sync(); schedule();});
+  const preset=(b,a,gm,tau,sp)=>()=>{
+    S.beta=b; S.drift=a; S.gam=gm; S.tau=tau; S.spread=sp; sync(); regen();
+  };
+  el("gP0").addEventListener("click",preset(0,0,0.7,12.5,false));    // free cloud
+  el("gP2").addEventListener("click",preset(0.6,0.8,0.7,12.5,false));// ruled fan
+  el("gP1").addEventListener("click",preset(0,0.85,1.4,3,true));     // the sketch
+  el("gP3").addEventListener("click",preset(4,0,0.7,12.5,false));    // harmony
+  el("gSpread").addEventListener("click",()=>{ S.spread=!S.spread; sync(); regen(); });
   el("gRe").addEventListener("click",regen);
   el("gDens").addEventListener("click",e=>{
     dens=!dens;

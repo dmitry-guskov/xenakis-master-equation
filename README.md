@@ -131,6 +131,8 @@ xen.py           the model: tension operator, generator, Petri assembly,
                  classical / Schrödinger / Lindblad integrators, Gillespie
 verify.py        the check suite (numbers quoted above and in the write-up)
 figures.py       figures 1–3
+pithoprakta.py   the velocity-jump reconstruction of the 1956 sketch, and the
+                 check of its spreading law (--check)
 anim.py          the 3D animation (mp4 + gif)
 sonify.py        both dynamics rendered to audio
 page.src.html    source of the write-up; {{FIG*}} tokens for the assets
@@ -147,6 +149,7 @@ pip install -r requirements.txt
 
 python verify.py           # the check suite (slow: the Lindblad sweep is ~40 min)
 python figures.py          # figures 1-3 into out/
+python pithoprakta.py --check   # the Pithoprakta reconstruction into out/
 python anim.py             # 3D animation into out/
 python sonify.py           # two WAVs into out/
 python build_page.py       # self-contained write-up
