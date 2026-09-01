@@ -3,8 +3,9 @@ import base64, os, sys
 
 SRC = "page.src.html"
 OUT = "/home/claude/xenakis/xenakis_master_equation.html"
-IMG = {"{{FIG1}}": ("out/fig1_sound_graphs.png", "image/png"),
-       "{{FIG2}}": ("out/fig2_chord_space.png", "image/png"),
+# fig 1 is now the live sound-graph explorer in the page itself; figures.py
+# still renders it into out/ for reference.
+IMG = {"{{FIG2}}": ("out/fig2_chord_space.png", "image/png"),
        "{{FIG3}}": ("out/fig3_quantum.png", "image/png"),
        "{{ANIM}}": ("out/chord_lattice.gif", "image/gif")}
 

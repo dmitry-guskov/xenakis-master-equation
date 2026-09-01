@@ -16,6 +16,7 @@ window.MathJax = {
   --ink:#0f1619; --ink2:#44525a; --muted:#78868d; --rule:#d5ddd9; --rule2:#e6ebe8;
   --cls:#2a78d6; --cls-ink:#1c5cab; --qnt:#e05f28; --qnt-ink:#a8410f;
   --ok:#0c7c4a;
+  --v1:#1f6fd0; --v2:#d1550f; --v3:#0f7d52;
   --shadow:0 1px 2px rgba(15,22,25,.05),0 8px 24px rgba(15,22,25,.05);
   color-scheme:light;
 }
@@ -25,6 +26,7 @@ window.MathJax = {
     --ink:#e9f0f1; --ink2:#a7b8bf; --muted:#7a888f; --rule:#222f34; --rule2:#1a252a;
     --cls:#3987e5; --cls-ink:#7fb2ee; --qnt:#eb7d4d; --qnt-ink:#f0a077;
     --ok:#3fae76;
+    --v1:#5aa0ee; --v2:#f08a4b; --v3:#46b884;
     --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
     color-scheme:dark;
   }
@@ -34,6 +36,7 @@ window.MathJax = {
   --ink:#e9f0f1; --ink2:#a7b8bf; --muted:#7a888f; --rule:#222f34; --rule2:#1a252a;
   --cls:#3987e5; --cls-ink:#7fb2ee; --qnt:#eb7d4d; --qnt-ink:#f0a077;
   --ok:#3fae76;
+  --v1:#5aa0ee; --v2:#f08a4b; --v3:#46b884;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
   color-scheme:dark;
 }
@@ -70,6 +73,9 @@ header{padding:clamp(3rem,7vw,5.5rem) 0 2.2rem;position:relative}
 #sg{display:block;width:100%;height:340px;background:var(--surface);border-bottom:1px solid var(--rule)}
 .sglab{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding:.5rem 1.1rem .7rem;font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--muted)}
 .sglab .mid{color:var(--ink2);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+#sgHist{display:block;width:100%;height:88px;background:var(--surface);border-top:1px solid var(--rule)}
+.sglegend{display:flex;flex-wrap:wrap;gap:1.15rem;padding:.65rem 1.1rem .15rem;font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--muted)}
+.sglegend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:.45rem}
 @media (max-width:620px){#sg{height:260px}.sglab span:last-child{display:none}}
 
 /* ---------- sections ---------- */
@@ -232,8 +238,15 @@ footer .col{max-width:74ch}
       <span class="eyebrow">Live &mdash; exact sample paths of (M), drawn in your browser</span>
       <span class="mono" id="sgClock" style="font-size:.72rem;color:var(--ink2);letter-spacing:.06em">t = 0.00</span>
     </div>
-    <canvas id="sg" aria-label="A sound graph: three voices performing a continuous-time random walk on pitch, fourteen realisations with one highlighted."></canvas>
+    <div class="sglegend">
+      <span><i style="background:var(--v1)"></i>voice 1 &middot; drift &plus;a</span>
+      <span><i style="background:var(--v2)"></i>voice 2 &middot; drift 0</span>
+      <span><i style="background:var(--v3)"></i>voice 3 &middot; drift &minus;a</span>
+    </div>
+    <canvas id="sg" aria-label="A sound graph: three voices performing a continuous-time random walk on pitch, as sample paths or as a probability density."></canvas>
     <div class="sglab"><span>pitch &uarr; &mdash; four octaves, one semitone per step</span><span class="mid" id="sgRead"></span><span>time &rarr;</span></div>
+    <canvas id="sgHist" aria-label="Stationary distribution of the interval between voices."></canvas>
+    <div class="sglab"><span>stationary interval distribution &mdash; semitones between voices</span><span class="mid" id="sgHistLab"></span></div>
     <div class="ctl">
       <div class="slider">
         <label for="gB"><span><i>&beta;</i> <u>tension</u></span><span id="gvB">0.6</span></label>
@@ -251,12 +264,14 @@ footer .col{max-width:74ch}
         <button id="gP1">Pithoprakta</button>
         <button id="gP2">Metastaseis</button>
         <button id="gP3">Harmony</button>
+        <button id="gDens" aria-pressed="false" title="Show the ensemble as a probability density over pitch and time instead of as individual paths">Density</button>
+        <button id="gSound" aria-pressed="false" title="Play the highlighted trio: voice 1 left, voice 2 centre, voice 3 right">Sound</button>
         <button id="gRe">Redraw</button>
         <button id="gPause" aria-pressed="false">Pause</button>
       </div>
     </div>
   </div>
-  <figcaption><b>Three regimes of one equation.</b> Each line is one voice, light to dark; the faint bundle behind is fourteen independent realisations of the same rule, of which the heavy trio is one. <b>Pithoprakta</b> sets \(\beta=0\) and the drift to zero — free diffusion, the cloud widening as \(\sqrt{\gamma t}\), the voices indifferent to each other. <b>Metastaseis</b> restores the drift at \(\pm0.8\) on the outer voices and the bundle opens into the ruled fan. <b>Harmony</b> raises \(\beta\) to 4 with no drift: the trio finds a consonant spacing within a few events and then moves as a body, the three lines locked a third and a fourth apart. Everything in the catalogue is a mixture of the three. The readout is the RMS spread of all voices from the starting pitch and the mean tension over the bundle; at \(\beta=0\) watch the spread track \(\sqrt{t}\), and at \(\beta=4\) watch \(\langle V\rangle\) fall and stay.</figcaption>
+  <figcaption><b>Three regimes of one equation, and both of its faces.</b> Each line is one voice &mdash; blue drifting up at \(+a\), orange free, green drifting down at \(-a\); the faint bundle behind is 240 independent realisations, of which the heavy trio is one. <b>Pithoprakta</b> sets \(\beta=0\) and the drift to zero: free diffusion, the cloud widening as \(\sqrt{\gamma t}\), the voices indifferent to one another. <b>Metastaseis</b> restores the drift at \(\pm0.8\) and the bundle opens into the ruled fan. <b>Harmony</b> raises \(\beta\) to 4 with no drift: the trio finds a consonant spacing within a few events and then moves as a body. <b>Density</b> switches from the paths to the thing (M) actually evolves &mdash; \(P(\text{pitch},t)\) over the whole ensemble, column-normalised, which is the cloud Xenakis was composing rather than any line in it. The strip below is the stationary distribution of the interval between voices, measured over the second half of every run: flat at \(\beta=0\), where every interval is about equally likely, and sharpening as \(\beta\) rises onto the fifth and its inversion the fourth &mdash; one interval class, since \(c\) is symmetrised &mdash; and then the thirds. <b>Sound</b> plays the highlighted trio, one voice per stereo position.</figcaption>
   </figure>
 
   <h3>The tension operator</h3>
@@ -275,10 +290,6 @@ footer .col{max-width:74ch}
 
   <p>with mobility \(\gamma\beta/2\) and diffusion \(D=\gamma/2\), so \(D/\text{mobility}=1/\beta\): the Einstein relation holds and \(\beta\) is a temperature in the honest sense. Set \(V=0\) and you get exactly the picture Xenakis drew for <em>Pithoprakta</em> — a cloud of pitch spreading as \(\sqrt{\gamma t}\), with each voice's glissando velocity \(a_i\) drawn from a distribution. Drawing those \(a_i\) from a Maxwell–Boltzmann law recovers his construction verbatim; equation (M) is the generator that construction was a sampling of. Keeping \(V\) turns the free cloud into motion on a harmonic landscape, and taking the process on a discrete lattice in discrete time is the <em>Analogique A/B</em> screen chain.</p>
 
-  <figure class="bleed">
-    <img src="assets/fig1_sound_graphs.png" alt="Four panels: glissando fan from many sample paths; the tension regime where voices bind; the probability density over pitch and time; and the stationary interval distribution at three temperatures.">
-    <figcaption><b>Two regimes of the same equation.</b> (a) Drift-dominated, \(\beta=0.6\): eighteen realisations, three voices each, opening into the ruled fan of <em>Metastaseis</em>. (b) Tension-dominated, \(\beta=4\), no drift: the trio binds and the voices move as a unit. (c) The density \(P(\text{pitch},t)\) for regime (a) over 500 realisations — this cloud, not any one path, is what (M) evolves. (d) Stationary probability of the interval between two voices; as \(\beta\) rises the flat Brownian distribution sharpens onto fifths and thirds.</figcaption>
-  </figure>
 
   </div></div>
 </section>
@@ -459,7 +470,7 @@ footer .col{max-width:74ch}
         <button id="bReset">Reset to C&ndash;E&ndash;G</button>
         <button id="bPause" aria-pressed="false">Pause</button>
         <button id="bMeasure">Measure</button>
-        <button id="bSound" aria-pressed="false">Sound</button>
+        <button id="bSound" aria-pressed="false" title="Both panels at once: the classical chord in the left ear, the quantum one in the right">Sound &mdash; L classical / R quantum</button>
       </div>
     </div>
   </div>
@@ -932,22 +943,20 @@ requestAnimationFrame(frame);
 // ------------------------------------------------- sound-graph explorer (§)
 (function soundgraph(){
   const cv=document.getElementById("sg"); if(!cv) return;
-  const NREG=48, TMAX=22, NENS=14, CAP=9000, P0=24;
-  const COLS=["#86b6ef","#2a78d6","#104281"];
-  const COLSD=["#9ec5f4","#5598e7","#2a78d6"];
+  const hcv=document.getElementById("sgHist");
+  const NREG=48, TMAX=22, TB=180, NENS=240, NLINE=12, CAP=9000, P0=24;
+  const NAME=["unison","semitone","whole tone","minor third","major third",
+              "fourth or fifth","tritone"];
   const S={beta:0.6, drift:0.8, gam:0.7};
   const el=id=>document.getElementById(id);
-  let paths=[], t=0, playing=true;
+  let paths=[], t=0, playing=true, dens=false, soundOn=false, pend=0;
+  const dgrid=new Float32Array(TB*NREG), hist=new Float64Array(12);
+  const off=document.createElement("canvas"); off.width=TB; off.height=NREG;
 
-  function Vx(v){
-    let s=0; const pr=[[v[0],v[1]],[v[0],v[2]],[v[1],v[2]]];
-    for(const [x,y] of pr){ const d=mod(x-y,12); s+=-CK[d]+(d===0?UU:0); }
-    const u=[v[0]]; if(mod(v[1]-v[0],12)!==0)u.push(v[1]);
-    if(mod(v[2]-v[0],12)!==0&&mod(v[2]-v[1],12)!==0)u.push(v[2]);
-    let best=0;
-    for(let r=0;r<12;r++){ let a=0; for(const q of u) a+=HT[mod(q-r,12)]; if(a>best)best=a; }
-    return s-MU*best;
-  }
+  // V is already tabulated over the 1728 pitch-class chords; the walk runs on
+  // real semitones, so fold the register away and look it up.
+  const Vx=v=>V[IDX(mod(v[0],12),mod(v[1],12),mod(v[2],12))];
+
   function newPath(){                       // exact Gillespie on the same rates
     const x=[P0,P0,P0], dr=[S.drift,0,-S.drift];
     const pts=[[0,P0,P0,P0]]; let tt=0, it=0;
@@ -970,11 +979,66 @@ requestAnimationFrame(frame);
     if(pts[pts.length-1][0]<TMAX) pts.push([TMAX,x[0],x[1],x[2]]);
     return pts;
   }
-  function regen(){ paths=[]; for(let i=0;i<NENS;i++) paths.push(newPath()); t=0; }
   function at(pts,tt){                       // state at time tt (binary search)
     let lo=0, hi=pts.length-1;
     while(lo<hi){ const m=(lo+hi+1)>>1; if(pts[m][0]<=tt) lo=m; else hi=m-1; }
     return pts[lo];
+  }
+  const hex2rgb=s=>{ s=s.trim().replace("#","");
+    if(s.length===3) s=s[0]+s[0]+s[1]+s[1]+s[2]+s[2];
+    const n=parseInt(s,16)||0; return [(n>>16)&255,(n>>8)&255,n&255]; };
+
+  function accumulate(){                     // P(pitch,t) and the interval law
+    dgrid.fill(0); hist.fill(0);
+    const dt=TMAX/TB, half=TMAX/2;
+    for(const pts of paths){
+      for(let i=0;i<pts.length-1;i++){
+        const t0=pts[i][0], t1=pts[i+1][0];
+        if(t1<=t0) continue;
+        let b0=Math.floor(t0/dt), b1=Math.ceil(t1/dt);
+        if(b0<0)b0=0; if(b1>TB)b1=TB;
+        for(let b=b0;b<b1;b++){
+          const ov=Math.min(t1,(b+1)*dt)-Math.max(t0,b*dt);
+          if(ov<=0) continue;
+          for(let v=0;v<3;v++){
+            const q=pts[i][1+v];
+            if(q>=0&&q<NREG) dgrid[b*NREG+q]+=ov;
+          }
+        }
+        const a0=Math.max(t0,half);           // stationary half only
+        if(t1>a0){
+          const w=t1-a0, q=pts[i];
+          hist[mod(q[1]-q[2],12)]+=w;
+          hist[mod(q[1]-q[3],12)]+=w;
+          hist[mod(q[2]-q[3],12)]+=w;
+        }
+      }
+    }
+    for(let b=0;b<TB;b++){                    // column-normalise
+      let mx=0;
+      for(let q=0;q<NREG;q++){ const x=dgrid[b*NREG+q]; if(x>mx) mx=x; }
+      if(mx>0) for(let q=0;q<NREG;q++) dgrid[b*NREG+q]/=mx;
+    }
+    let s=0; for(let k=0;k<12;k++) s+=hist[k];
+    if(s>0) for(let k=0;k<12;k++) hist[k]/=s;
+    paintDensity();
+    const fh=new Float64Array(7);            // d and 12-d are one interval class
+    for(let k=0;k<12;k++) fh[Math.min(k,12-k)]+=hist[k];
+    const rank=[...fh.keys()].sort((a,b)=>fh[b]-fh[a]);
+    el("sgHistLab").textContent = fh[rank[0]]<0.21      // 2/12 is the flat value
+      ? "flat \u2014 every interval about equally likely"
+      : "mostly a "+NAME[rank[0]]+" ("+(100*fh[rank[0]]).toFixed(0)
+        +"%), then a "+NAME[rank[1]];
+  }
+  function paintDensity(){
+    const g=off.getContext("2d"), im=g.createImageData(TB,NREG);
+    const [r,gg,b]=hex2rgb(css("--cls")||"#2a78d6");
+    for(let x=0;x<TB;x++) for(let q=0;q<NREG;q++){
+      const o=((NREG-1-q)*TB+x)*4, d=dgrid[x*NREG+q];
+      im.data[o]=r; im.data[o+1]=gg; im.data[o+2]=b;
+      im.data[o+3]=Math.round(255*Math.pow(Math.min(1,d),0.62));
+    }
+    g.putImageData(im,0,0);
   }
   function stroke(g,pts,v,upTo,w,alpha,col,px,py){
     g.strokeStyle=col; g.globalAlpha=alpha; g.lineWidth=w; g.beginPath();
@@ -991,39 +1055,95 @@ requestAnimationFrame(frame);
     const d=fit(cv), w=cv.width, h=cv.height, g=cv.getContext("2d");
     g.clearRect(0,0,w,h);
     const px=tt=>(tt/TMAX)*w, py=q=>h-(q/NREG)*h;
-    const bg=getComputedStyle(document.body).backgroundColor.match(/\d+/g);
-    const isDark=bg&&(+bg[0]+ +bg[1]+ +bg[2])<250;
-    const C=isDark?COLSD:COLS;
-    g.strokeStyle=css("--rule2")||css("--rule"); g.lineWidth=d; g.globalAlpha=1;
-    for(let q=0;q<=NREG;q+=12){                       // octave rules
+    const C=[css("--v1"),css("--v2"),css("--v3")];
+    g.strokeStyle=css("--rule2"); g.lineWidth=d; g.globalAlpha=1;
+    for(let q=0;q<=NREG;q+=12){               // octave rules
       g.beginPath(); g.moveTo(0,py(q)+0.5); g.lineTo(w,py(q)+0.5); g.stroke();
     }
-    for(const pts of paths) for(let v=0;v<3;v++)
-      stroke(g,pts,v,TMAX,0.8*d,0.10,C[v],px,py);    // the whole bundle, faint
-    paths.forEach((pts,pi)=>{ for(let v=0;v<3;v++)
-      stroke(g,pts,v,t,(pi===0?2.0:1.0)*d,pi===0?0.95:0.28,C[v],px,py); });
+    if(dens){
+      g.imageSmoothingEnabled=true; g.globalAlpha=0.95;
+      g.drawImage(off,0,0,w,h);
+      g.globalAlpha=1;
+      for(let v=0;v<3;v++) stroke(g,paths[0],v,t,1.4*d,0.85,C[v],px,py);
+    }else{
+      for(let i=0;i<paths.length;i++) for(let v=0;v<3;v++)
+        stroke(g,paths[i],v,TMAX,0.8*d,i<NLINE?0.13:0.045,C[v],px,py);
+      for(let i=0;i<NLINE;i++) for(let v=0;v<3;v++)
+        stroke(g,paths[i],v,t,(i===0?2.1:1.0)*d,i===0?0.95:0.3,C[v],px,py);
+    }
     if(t<TMAX){
-      g.globalAlpha=0.9; g.strokeStyle=css("--qnt"); g.lineWidth=1.2*d;
+      g.globalAlpha=0.85; g.strokeStyle=css("--muted"); g.lineWidth=1.1*d;
       g.beginPath(); g.moveTo(px(t),0); g.lineTo(px(t),h); g.stroke();
     }
     g.globalAlpha=1;
   }
+  function drawHist(){
+    const d=fit(hcv), w=hcv.width, h=hcv.height, g=hcv.getContext("2d");
+    g.clearRect(0,0,w,h);
+    const pad=10*d, base=h-16*d, top=8*d;
+    let mx=0; for(let k=0;k<12;k++) if(hist[k]>mx) mx=hist[k];
+    if(mx<=0) mx=1;
+    const bw=(w-2*pad)/12;
+    g.strokeStyle=css("--rule"); g.lineWidth=d;
+    g.beginPath(); g.moveTo(pad,base+0.5); g.lineTo(w-pad,base+0.5); g.stroke();
+    g.font=(9*d)+"px 'IBM Plex Mono', monospace"; g.textAlign="center";
+    for(let k=0;k<12;k++){
+      const x=pad+k*bw, hh=(base-top)*(hist[k]/mx);
+      g.fillStyle=(k===7||k===5||k===4||k===3||k===8||k===9)?css("--cls"):css("--rule");
+      g.globalAlpha=(k===7||k===5||k===4||k===3||k===8||k===9)?0.9:1;
+      g.fillRect(x+bw*0.16,base-hh,bw*0.68,hh);
+      g.globalAlpha=1;
+      g.fillStyle=css("--muted");
+      g.fillText(String(k),x+bw*0.5,h-4*d);
+    }
+  }
   function readout(){
     let s2=0, n=0, vv=0;
-    for(const pts of paths){
-      const q=at(pts,t);
+    for(let i=0;i<NLINE&&i<paths.length;i++){
+      const q=at(paths[i],t);
       for(let v=0;v<3;v++){ const dd=q[1+v]-P0; s2+=dd*dd; n++; }
       vv+=Vx([q[1],q[2],q[3]]);
     }
     el("sgClock").textContent="t = "+t.toFixed(2);
     el("sgRead").textContent="spread "+Math.sqrt(s2/Math.max(1,n)).toFixed(2)
-      +" st · ⟨V⟩ "+(vv/Math.max(1,paths.length)).toFixed(2);
+      +" st · ⟨V⟩ "+(vv/Math.min(NLINE,paths.length)).toFixed(2);
   }
+  function regen(){
+    paths=[]; for(let i=0;i<NENS;i++) paths.push(newPath());
+    t=0; accumulate(); drawHist();
+  }
+  function schedule(){ clearTimeout(pend); pend=setTimeout(regen,130); }
+
+  // ---- audio: the highlighted trio, one voice per stereo position ----------
+  let actx=null, sgv=null;
+  function aInit(){
+    if(actx) return;
+    actx=new (window.AudioContext||window.webkitAudioContext)();
+    sgv=[0,1,2].map(i=>{
+      const o=actx.createOscillator(), g=actx.createGain(), pn=actx.createStereoPanner();
+      o.type="triangle"; g.gain.value=0; pn.pan.value=[-0.55,0,0.55][i];
+      o.connect(g); g.connect(pn); pn.connect(actx.destination); o.start();
+      return {o,g};
+    });
+  }
+  function aUpdate(){
+    if(!soundOn||!actx||!paths.length) return;
+    const q=at(paths[0],t), now=actx.currentTime;
+    for(let v=0;v<3;v++){
+      const semi=36+q[1+v];                   // pitch 24 -> middle C
+      sgv[v].o.frequency.setTargetAtTime(8.1758*Math.pow(2,semi/12),now,0.045);
+      sgv[v].g.gain.setTargetAtTime(0.05,now,0.1);
+    }
+  }
+  function aStop(){
+    if(actx&&sgv) sgv.forEach(v=>v.g.gain.setTargetAtTime(0,actx.currentTime,0.07));
+  }
+
   let last=performance.now();
   function loop(now){
     const dt=Math.min(0.05,(now-last)/1000); last=now;
     if(playing){ t+=dt*5.5; if(t>TMAX+1.6) regen(); }
-    draw(); readout(); requestAnimationFrame(loop);
+    draw(); readout(); aUpdate(); requestAnimationFrame(loop);
   }
   function sync(){
     el("gvB").textContent=S.beta.toFixed(1);
@@ -1031,19 +1151,31 @@ requestAnimationFrame(frame);
     el("gvG").textContent=S.gam.toFixed(2);
     el("gB").value=S.beta; el("gA").value=S.drift; el("gG").value=S.gam;
   }
-  el("gB").addEventListener("input",e=>{S.beta=+e.target.value; sync(); regen();});
-  el("gA").addEventListener("input",e=>{S.drift=+e.target.value; sync(); regen();});
-  el("gG").addEventListener("input",e=>{S.gam=+e.target.value; sync(); regen();});
+  el("gB").addEventListener("input",e=>{S.beta=+e.target.value; sync(); schedule();});
+  el("gA").addEventListener("input",e=>{S.drift=+e.target.value; sync(); schedule();});
+  el("gG").addEventListener("input",e=>{S.gam=+e.target.value; sync(); schedule();});
   const preset=(b,a,gm)=>()=>{ S.beta=b; S.drift=a; S.gam=gm; sync(); regen(); };
   el("gP1").addEventListener("click",preset(0,0,0.7));      // free pitch gas
   el("gP2").addEventListener("click",preset(0.6,0.8,0.7));  // the ruled fan
   el("gP3").addEventListener("click",preset(4,0,0.7));      // harmony wins
   el("gRe").addEventListener("click",regen);
+  el("gDens").addEventListener("click",e=>{
+    dens=!dens;
+    e.currentTarget.setAttribute("aria-pressed",String(dens));
+    e.currentTarget.textContent=dens?"Paths":"Density";
+  });
+  el("gSound").addEventListener("click",e=>{
+    soundOn=!soundOn;
+    if(soundOn){ aInit(); if(actx.state==="suspended") actx.resume(); } else aStop();
+    e.currentTarget.setAttribute("aria-pressed",String(soundOn));
+    e.currentTarget.textContent=soundOn?"Sound off":"Sound";
+  });
   el("gPause").addEventListener("click",e=>{
     playing=!playing;
     e.currentTarget.setAttribute("aria-pressed",String(!playing));
     e.currentTarget.textContent=playing?"Pause":"Resume";
   });
+  addEventListener("resize",()=>{ paintDensity(); drawHist(); });
   sync(); regen();
   if(reduce){ t=TMAX; draw(); readout(); } else requestAnimationFrame(loop);
 })();
