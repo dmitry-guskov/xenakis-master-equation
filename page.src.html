@@ -261,7 +261,7 @@ footer .col{max-width:74ch}
         <input type="range" id="gG" min="0.2" max="2" step="0.05" value="0.7">
       </div>
       <div class="slider">
-        <label for="gT"><span><i>&tau;</i> <u>velocity memory</u></span><span id="gvT">&infin;</span></label>
+        <label for="gT"><span><i>&tau;</i> <u>segment length</u></span><span id="gvT">&infin;</span></label>
         <input type="range" id="gT" min="0.5" max="12.5" step="0.5" value="12.5">
       </div>
       <div class="btns">
@@ -277,7 +277,7 @@ footer .col{max-width:74ch}
       </div>
     </div>
   </div>
-  <figcaption><b>Three regimes of one equation, and both of its faces.</b> Each line is one voice &mdash; blue drifting up at \(+a\), orange free, green drifting down at \(-a\); the faint bundle behind is 240 independent realisations, of which the heavy trio is one. <b>Brownian</b> sets \(\beta=0\) and the drift to zero: free diffusion, the cloud widening as \(\sqrt{\gamma t}\), the voices indifferent to one another. <b>Metastaseis</b> restores the drift at \(\pm0.8\) and the bundle opens into the ruled fan. <b>Pithoprakta</b> is the velocity-jump construction of the 1956 sketch: voices spread across the register, no potential, and a finite velocity memory \(\tau\), so each line stays straight long enough for the family to fold — turn \(\tau\) down and the lenses dissolve into a diffusive wash, turn it to \(\infty\) and every line is straight for the whole run. <b>Harmony</b> raises \(\beta\) to 4 with no drift: the trio finds a consonant spacing within a few events and then moves as a body. <b>Density</b> switches from the paths to the thing (M) actually evolves &mdash; \(P(\text{pitch},t)\) over the whole ensemble, column-normalised, which is the cloud Xenakis was composing rather than any line in it. The strip below is the stationary distribution of the interval between voices, measured over the second half of every run: flat at \(\beta=0\), where every interval is about equally likely, and sharpening as \(\beta\) rises onto the fifth and its inversion the fourth &mdash; one interval class, since \(c\) is symmetrised &mdash; and then the thirds. <b>Sound</b> plays the highlighted trio, one voice per stereo position. At \(\tau=\infty\) the three drifts are fixed at \(+a,0,-a\) as the legend says; at any finite \(\tau\) every voice redraws its own velocity from the Maxwell–Boltzmann law of parameter \(a\).</figcaption>
+  <figcaption><b>Three regimes of one equation, and both of its faces.</b> Each line is one voice &mdash; blue drifting up at \(+a\), orange free, green drifting down at \(-a\); the faint bundle behind is 240 independent realisations, of which the heavy trio is one. <b>Brownian</b> sets \(\beta=0\) and the drift to zero: free diffusion, the cloud widening as \(\sqrt{\gamma t}\), the voices indifferent to one another. <b>Metastaseis</b> restores the drift at \(\pm0.8\) and the bundle opens into the ruled fan. <b>Pithoprakta</b> is the velocity-jump construction of the 1956 sketch: voices spread across the register, no potential, and a finite velocity memory \(\tau\), so each line stays straight long enough for the family to fold — turn \(\tau\) down and the lenses dissolve into a diffusive wash, turn it to \(\infty\) and every line is straight for the whole run. <b>Harmony</b> raises \(\beta\) to 4 with no drift: the trio finds a consonant spacing within a few events and then moves as a body. <b>Density</b> switches from the paths to the thing (M) actually evolves &mdash; \(P(\text{pitch},t)\) over the whole ensemble, column-normalised, which is the cloud Xenakis was composing rather than any line in it. The strip below is the stationary distribution of the interval between voices, measured over the second half of every run: flat at \(\beta=0\), where every interval is about equally likely, and sharpening as \(\beta\) rises onto the fifth and its inversion the fourth &mdash; one interval class, since \(c\) is symmetrised &mdash; and then the thirds. <b>Sound</b> plays the highlighted trio, one voice per stereo position. At \(\tau=\infty\) the three drifts are fixed at \(+a,0,-a\) as the legend says; at any finite \(\tau\) every voice redraws its velocity from the Maxwell–Boltzmann law of parameter \(a\), at boundaries common to the whole ensemble as on the sheet — which is what lets the folds appear at all.</figcaption>
   </figure>
 
   <h3>The tension operator</h3>
@@ -306,22 +306,19 @@ footer .col{max-width:74ch}
 
   <p>wherever \(x_0'\) and \(v'\) have opposite signs — wherever a stretch of the ensemble happens to be given velocities that decrease as the starting pitch increases. There the family folds and the line density diverges. The bright edge is a <b>caustic</b>, the same object as the bright curve at the bottom of a coffee cup, and the lens between two of them is the region covered twice. Draw forty-six velocities independently from a Maxwell–Boltzmann law and such stretches occur all over the sheet by chance; the register's finite width folds the band again at the top and bottom. That is the loop.</p>
 
+  <p>One detail of his procedure decides whether any of this is visible, and it is easy to get wrong. Xenakis redraws the <em>whole orchestra</em> at once: the segment boundaries are common to every part. Between two of them the ensemble is a single family of straight lines sharing an origin in time, and a family like that has an envelope. Give each part its own private clock instead — tumbling at its own random moments — and every fold happens at a different instant, the envelopes never coincide, and the caustics wash out into an even mesh. The loops are not merely a consequence of straight lines; they are a consequence of <em>synchronised</em> straight lines.</p>
+
   <div class="note"><b>Caustics need memory of velocity, and (M) has none.</b> A fold at \(t^{*}\) requires the velocities to still be the velocities at \(t^{*}\) — the lines must stay straight long enough to cross. Xenakis holds each velocity for a whole time segment and redraws it at the next. Equation (M) redraws at every single event: the jump direction is resampled from the rates each time a voice moves, so nothing is remembered, no line stays straight, and no caustic can form. Our sound graphs have no loops because (M) is the <em>overdamped</em> limit of his construction.</div>
 
   <p>The parameter that separates them is the velocity persistence \(\tau\). Hold a velocity for a mean time \(\tau\), then draw a fresh one with variance \(\sigma^2\); the velocity autocorrelation is \(\sigma^2e^{-t/\tau}\) and the spread is exactly</p>
 
   <div class="eq"><div>\[ \langle x^2\rangle \;=\; 2\sigma^2\tau^2\Big(\frac{t}{\tau}-1+e^{-t/\tau}\Big)\;\longrightarrow\;\begin{cases}\sigma^2t^2 & t\ll\tau\quad\text{(ballistic — Xenakis)}\\[2pt] 2\sigma^2\tau\,t & t\gg\tau\quad\text{(diffusive — equation (M))}\end{cases} \]</div></div>
 
-  <p>so the two descriptions are one process seen at two time scales, and the dictionary between them is \(D=\sigma^2\tau\), i.e. \(\gamma/2=\sigma^2\tau\). Equation (M) is the limit \(\tau\to0\) at fixed \(D\). Keeping \(\tau\) finite means keeping velocity as a state variable — the Kramers description in phase space rather than the Smoluchowski one in pitch alone — and the caustics live in the phase-space picture, which is why they vanish from ours. <b>The loops in the sketch are the signature of underdamped dynamics.</b></p>
-
-  <figure class="bleed">
-    <img src="{{FIGP}}" alt="Two panels of forty-six piecewise-linear pitch trajectories. In the upper panel, with a long velocity memory, the lines stay straight for long stretches and the family folds into lens-shaped voids. In the lower panel, at the same diffusion constant but with a short memory, the paths are jagged and the voids are gone.">
-    <figcaption><b>The same diffusion constant, two velocity memories.</b> Forty-six parts, speeds drawn from the sheet's law \(f(s)=\tfrac{2}{\alpha\sqrt\pi}e^{-s^2/\alpha^2}\) at \(\alpha=35\), signs random, register edges reflecting. The segment boundaries are <em>common to every part</em>, as they are on the sheet — Xenakis redraws the whole orchestra at once — and that is what makes the folds visible: between two boundaries the ensemble is a single family of forty-six straight lines sharing an origin in time, and a family like that has an envelope. Give each part its own private clock and every fold happens at a different instant, so the caustics wash out. <b>Above</b>, \(\tau=2\): the lines stay straight long enough to cross, and each void is a lens between two caustics. <b>Below</b>, \(\tau=0.25\) with \(\sigma^2\) raised eightfold to hold \(D\) fixed at 24.5, so both panels spread at exactly the same long-time rate: the paths go jagged, the folds dissolve, and what is left is equation (M). Same seed, so both start from the same forty-six pitches. Deterministic segments give \(\langle x^2\rangle=\sigma^2(n\tau^2+r^2)\) for \(t=n\tau+r\), hence \(D=\sigma^2\tau/2\) — the same ballistic law as above and half the long-time \(D\), since Poisson holding times fluctuate and fluctuation carries you further. <span class="mono">pithoprakta.py --check</span> confirms both conventions to within 3%. This is a reconstruction of the method, not a reproduction of the manuscript: the local mesh and the lenses are what the method produces, while the manuscript's large-scale voids are composed — Xenakis varies \(\alpha\) and the register from passage to passage, and the sheet carries the passages he crossed out.</figcaption>
-  </figure>
+  <p>so the two descriptions are one process seen at two time scales, and the dictionary between them is \(D=\sigma^2\tau\), i.e. \(\gamma/2=\sigma^2\tau\). Common boundaries make the segment length deterministic rather than exponential, which gives \(\langle x^2\rangle=\sigma^2(n\tau^2+r^2)\) for \(t=n\tau+r\) and so \(D=\sigma^2\tau/2\) — the same ballistic law at short times, which is all the caustics depend on, and half the long-time \(D\), since Poisson holding times fluctuate and fluctuation carries you further. Equation (M) is the limit \(\tau\to0\) at fixed \(D\). Keeping \(\tau\) finite means keeping velocity as a state variable — the Kramers description in phase space rather than the Smoluchowski one in pitch alone — and the caustics live in the phase-space picture, which is why they vanish from ours. <b>The loops in the sketch are the signature of underdamped dynamics.</b></p>
 
   <p>None of this leaves the framework. Enlarge the species from “voice \(i\) is on pitch \(p\)” to “voice \(i\) is on pitch \(p\) with velocity class \(u\)”, and add one transition per voice that changes \(u\) at rate \(1/\tau\) — a tumble. Every transition is still unary, so §02's Petri-net Hamiltonian and its companion rate equation go through unchanged; only the state space is bigger. Xenakis's construction is not outside (M), it is (M) on a phase space that (M) had integrated out.</p>
 
-  <p>Which is testable: the <b>Pithoprakta</b> preset in the explorer above sets \(\beta=0\), spreads the voices across the register the way forty-six players are spread across their ranges, and gives \(\tau\) a finite value. Turn \(\tau\) down and the lenses dissolve into the diffusive wash; turn it to \(\infty\) and every line is straight for the whole run. To reproduce the sketch offline at print resolution, <span class="mono">pithoprakta.py</span> in the repository runs the same velocity-jump process for forty-six parts and draws it on the same graph paper.</p>
+  <p>Which is testable: the <b>Pithoprakta</b> preset in the explorer above sets \(\beta=0\), spreads the voices across the register the way forty-six players are spread across their ranges, and gives \(\tau\) a finite value. Turn \(\tau\) down and the lenses dissolve into the diffusive wash; turn it to \(\infty\) and every line is straight for the whole run. To reproduce the sketch offline at print resolution, <span class="mono">pithoprakta.py</span> in the repository runs the same velocity-jump process for forty-six parts and draws it on the same graph paper, at two velocity memories with the diffusion constant held fixed; its <span class="mono">--check</span> confirms both spreading laws to within 3%. What it does not reproduce is the manuscript's large-scale shape: the local mesh and the lenses are what the method produces, while the empty registers and the narrowing of the band are composed — Xenakis varies \(\alpha\) and the register from passage to passage, and the sheet carries the passages he crossed out.</p>
 
   <p class="mono" style="font-size:.72rem;color:var(--muted);max-width:70ch">The manuscript itself is only half generated, and honest reproduction should say so: the sheet carries crossed-out passages and alternative numbered takes in the margins. Xenakis sampled, looked, and chose. The caustics are the physics; the editing is the composer.</p>
 
@@ -511,13 +508,6 @@ footer .col{max-width:74ch}
 
   <p style="margin-top:1.2rem"><b>Measure</b> applies the Born rule to the quantum state and collapses it onto a single chord — press it repeatedly and fast to watch the Zeno effect hold the chord still. <b>Sound</b> voices the most probable chord of each panel through three oscillators, classical in the left ear, quantum in the right.</p>
 
-  <h3>Rendered out</h3>
-  <p>The same run, recorded: the classical cloud creeping outward from C–E–G while the quantum one crosses the torus and returns, with the distance traces beneath.</p>
-
-  <figure class="bleed">
-    <img src="{{ANIM}}" alt="Animation of the classical and quantum probability clouds evolving over the chord lattice.">
-    <figcaption><b>150 frames, \(t=0\) to \(8\), \(\beta=2\), \(J=1\).</b> Left, the master equation; right, unitary evolution on the same lattice. Both start on C–E–G, circled. The quantum cloud reaches the lattice boundary and interferes with itself; the classical one is still filling its neighbourhood.</figcaption>
-  </figure>
 
   </div></div>
 </section>
@@ -1000,10 +990,15 @@ requestAnimationFrame(frame);
     return (Math.random()<0.5?-1:1)*s;
   }
   function newPath(){                       // exact Gillespie on the same rates
-    const inf=S.tau>TAUINF, tum=inf?0:1/S.tau;
+    // Segment boundaries are at multiples of tau, the SAME instants for every
+    // path in the ensemble -- Xenakis redraws the whole orchestra at once, and
+    // the folds are only visible because he does.  Rates are constant between
+    // boundaries, so discarding a candidate jump time that lands beyond the
+    // next boundary and resampling after it is exact (exponentials forget).
+    const inf=S.tau>TAUINF;
     const x=S.spread ? [0,0,0].map(()=>Math.floor(Math.random()*NREG)) : [P0,P0,P0];
     const dr=inf ? [S.drift,0,-S.drift] : [mb(),mb(),mb()];
-    const pts=[[0,x[0],x[1],x[2]]]; let tt=0, it=0;
+    const pts=[[0,x[0],x[1],x[2]]]; let tt=0, it=0, tb=inf?Infinity:S.tau;
     while(tt<TMAX && it++<CAP){
       const mv=[], rt=[]; const v0=Vx(x);
       for(let i=0;i<3;i++) for(const sg of [1,-1]){
@@ -1012,15 +1007,16 @@ requestAnimationFrame(frame);
         mv.push(y); rt.push(S.gam*(1+sg*dr[i])/(1+Math.exp(S.beta*(Vx(y)-v0))));
       }
       let R=0; for(const r of rt) R+=r;
-      const RT=R+3*tum;                     // jumps and tumbles compete
-      if(RT<=1e-12) break;
-      tt+=-Math.log(Math.random()||1e-9)/RT;
-      if(tt>=TMAX) break;
-      const pick=Math.random()*RT;
-      if(pick>=R){                          // a tumble: new velocity, same pitch
-        dr[Math.min(2,Math.floor((pick-R)/tum))]=mb();
+      if(R<=1e-12) break;
+      const dtj=-Math.log(Math.random()||1e-9)/R;
+      if(tt+dtj>tb){                        // the boundary comes first
+        tt=tb; tb+=S.tau;
+        dr[0]=mb(); dr[1]=mb(); dr[2]=mb();
         continue;
       }
+      tt+=dtj;
+      if(tt>=TMAX) break;
+      const pick=Math.random()*R;
       let k=0, acc=0;
       for(k=0;k<rt.length;k++){ acc+=rt[k]; if(acc>=pick) break; }
       const nx=mv[Math.min(k,mv.length-1)];

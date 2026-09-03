@@ -5,9 +5,10 @@ SRC = "page.src.html"
 OUT = "/home/claude/xenakis/xenakis_master_equation.html"
 # fig 1 is now the live sound-graph explorer in the page itself; figures.py
 # still renders it into out/ for reference.
-IMG = {"{{FIGP}}": ("out/fig_pithoprakta.png", "image/png"),
-       "{{FIG2}}": ("out/fig2_chord_space.png", "image/png"),
+IMG = {"{{FIG2}}": ("out/fig2_chord_space.png", "image/png"),
        "{{FIG3}}": ("out/fig3_quantum.png", "image/png"),
+       # the page no longer embeds the animation, but the README does,
+       # so keep copying it into docs/assets
        "{{ANIM}}": ("out/chord_lattice.gif", "image/gif")}
 
 EXTERNAL = "--external" in sys.argv     # for GitHub Pages: assets as separate files
