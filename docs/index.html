@@ -277,7 +277,7 @@ footer .col{max-width:74ch}
       </div>
     </div>
   </div>
-  <figcaption><b>Three regimes of one equation, and both of its faces.</b> Each line is one voice &mdash; blue drifting up at \(+a\), orange free, green drifting down at \(-a\); the faint bundle behind is 240 independent realisations, of which the heavy trio is one. <b>Brownian</b> sets \(\beta=0\) and the drift to zero: free diffusion, the cloud widening as \(\sqrt{\gamma t}\), the voices indifferent to one another. <b>Metastaseis</b> restores the drift at \(\pm0.8\) and the bundle opens into the ruled fan. <b>Pithoprakta</b> is the velocity-jump construction of the 1956 sketch: voices spread across the register, no potential, and a finite velocity memory \(\tau\), so each line stays straight long enough for the family to fold — turn \(\tau\) down and the lenses dissolve into a diffusive wash, turn it to \(\infty\) and every line is straight for the whole run. <b>Harmony</b> raises \(\beta\) to 4 with no drift: the trio finds a consonant spacing within a few events and then moves as a body. <b>Density</b> switches from the paths to the thing (M) actually evolves &mdash; \(P(\text{pitch},t)\) over the whole ensemble, column-normalised, which is the cloud Xenakis was composing rather than any line in it. The strip below is the stationary distribution of the interval between voices, measured over the second half of every run: flat at \(\beta=0\), where every interval is about equally likely, and sharpening as \(\beta\) rises onto the fifth and its inversion the fourth &mdash; one interval class, since \(c\) is symmetrised &mdash; and then the thirds. <b>Sound</b> plays the highlighted trio, one voice per stereo position. At \(\tau=\infty\) the three drifts are fixed at \(+a,0,-a\) as the legend says; at any finite \(\tau\) every voice redraws its velocity from the Maxwell–Boltzmann law of parameter \(a\), at boundaries common to the whole ensemble as on the sheet — which is what lets the folds appear at all.</figcaption>
+  <figcaption><b>Three regimes of one equation, and both of its faces.</b> Each line is one voice &mdash; blue drifting up at \(+a\), orange free, green drifting down at \(-a\); the faint bundle behind is 240 independent realisations, of which the heavy trio is one. <b>Brownian</b> sets \(\beta=0\) and the drift to zero: free diffusion, the cloud widening as \(\sqrt{\gamma t}\), the voices indifferent to one another. <b>Metastaseis</b> restores the drift at \(\pm0.8\) and the bundle opens into the ruled fan. <b>Pithoprakta</b> is the velocity-jump construction of the 1956 sketch: voices spread across the register, no potential, and a finite velocity memory \(\tau\), so each line stays straight long enough for the family to fold — turn \(\tau\) down and the lenses dissolve into a diffusive wash, turn it to \(\infty\) and every line is straight for the whole run. <b>Harmony</b> raises \(\beta\) to 4 with no drift: the trio finds a consonant spacing within a few events and then moves as a body. <b>Density</b> switches from the paths to the thing (M) actually evolves &mdash; \(P(\text{pitch},t)\) over the whole ensemble, column-normalised, which is the cloud Xenakis was composing rather than any line in it. The strip below is the stationary distribution of the interval between voices, measured over the second half of every run: flat at \(\beta=0\), where every interval is about equally likely, and sharpening as \(\beta\) rises onto the fifth and its inversion the fourth &mdash; one interval class, since \(c\) is symmetrised &mdash; and then the thirds. <b>Spread start</b> changes what you are looking at: the voices begin scattered across the register instead of on one pitch, and the lines stop being alternative performances of one trio and become <em>one</em> performance by forty-five independent parts — which, since they share their segment boundaries, is exactly Xenakis's orchestra. Fewer lines are drawn in that mode for the same reason his sheet has forty-six and not seven hundred. <b>Sound</b> plays the highlighted trio, one voice per stereo position. At \(\tau=\infty\) the three drifts are fixed at \(+a,0,-a\) as the legend says; at any finite \(\tau\) every voice redraws its velocity from the Maxwell–Boltzmann law of parameter \(a\), at boundaries common to the whole ensemble as on the sheet — which is what lets the folds appear at all.</figcaption>
   </figure>
 
   <h3>The tension operator</h3>
@@ -969,6 +969,7 @@ requestAnimationFrame(frame);
   const cv=document.getElementById("sg"); if(!cv) return;
   const hcv=document.getElementById("sgHist");
   const NREG=48, TMAX=22, TB=180, NENS=240, NDRAW=46, NLINE=12, CAP=12000, P0=24;
+  const NORCH=15;                           // 15 paths x 3 = 45 parts, as on the sheet
   const NAME=["unison","semitone","whole tone","minor third","major third",
               "fourth or fifth","tritone"];
   const S={beta:0.6, drift:0.8, gam:0.7, tau:12.5, spread:false};
@@ -1113,10 +1114,18 @@ requestAnimationFrame(frame);
       g.globalAlpha=1;
       for(let v=0;v<3;v++) stroke(g,paths[0],v,t,1.4*d,0.85,C[v],px,py);
     }else{
-      for(let i=0;i<NDRAW&&i<paths.length;i++) for(let v=0;v<3;v++)
-        stroke(g,paths[i],v,TMAX,0.8*d,i<NLINE?0.15:0.11,C[v],px,py);
-      for(let i=0;i<NLINE;i++) for(let v=0;v<3;v++)
-        stroke(g,paths[i],v,t,(i===0?2.1:1.0)*d,i===0?0.95:0.3,C[v],px,py);
+      if(S.spread){
+        // Independent parts sharing common segment boundaries ARE one Xenakis
+        // orchestra, so draw them as one performance rather than as a faint
+        // cloud of alternatives with a soloist picked out of it.
+        for(let i=0;i<NORCH&&i<paths.length;i++) for(let v=0;v<3;v++)
+          stroke(g,paths[i],v,TMAX,(i===0?1.6:0.9)*d,i===0?0.9:0.42,C[v],px,py);
+      }else{
+        for(let i=0;i<NDRAW&&i<paths.length;i++) for(let v=0;v<3;v++)
+          stroke(g,paths[i],v,TMAX,0.8*d,i<NLINE?0.15:0.11,C[v],px,py);
+        for(let i=0;i<NLINE;i++) for(let v=0;v<3;v++)
+          stroke(g,paths[i],v,t,(i===0?2.1:1.0)*d,i===0?0.95:0.3,C[v],px,py);
+      }
     }
     if(t<TMAX){
       g.globalAlpha=0.85; g.strokeStyle=css("--muted"); g.lineWidth=1.1*d;
@@ -1202,6 +1211,7 @@ requestAnimationFrame(frame);
     el("gG").value=S.gam;  el("gT").value=S.tau;
     const b=el("gSpread");
     b.setAttribute("aria-pressed",String(S.spread));
+    b.textContent=S.spread?"Start together":"Spread start";
   }
   el("gB").addEventListener("input",e=>{S.beta=+e.target.value; sync(); schedule();});
   el("gA").addEventListener("input",e=>{S.drift=+e.target.value; sync(); schedule();});
